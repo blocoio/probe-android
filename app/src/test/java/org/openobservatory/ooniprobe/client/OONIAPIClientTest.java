@@ -5,14 +5,12 @@ import com.raizlabs.android.dbflow.sql.language.Delete;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.openobservatory.ooniprobe.RobolectricAbstractTest;
 import org.openobservatory.ooniprobe.client.callback.CheckReportIdCallback;
 import org.openobservatory.ooniprobe.client.callback.GetMeasurementJsonCallback;
 import org.openobservatory.ooniprobe.client.callback.GetMeasurementsCallback;
 import org.openobservatory.ooniprobe.model.api.ApiMeasurement;
 import org.openobservatory.ooniprobe.model.database.Measurement;
-import org.robolectric.RobolectricTestRunner;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +26,7 @@ public class OONIAPIClientTest extends RobolectricAbstractTest {
     private static final String NONEXISTING_REPORT_ID = "EMPTY";
     private static final String CLIENT_URL = "https://ams-pg.ooni.org";
     private static final String NON_EXISTING_MEASUREMENT_URL = CLIENT_URL + "/api/v1/measurement/nonexistent-measurement-url";
+
 
     @Test
     public void getMeasurementSuccess() {
@@ -143,8 +142,9 @@ public class OONIAPIClientTest extends RobolectricAbstractTest {
         measurement.is_done = true;
         measurement.is_uploaded = true;
         measurement.save();
-        if (write_file) {
-            File entryFile = Measurement.getEntryFile(a, measurement.id, measurement.test_name);
+
+        if (write_file){
+            File entryFile = Measurement.getEntryFile(c, measurement.id, measurement.test_name);
             entryFile.getParentFile().mkdirs();
             FileUtils.writeStringToFile(
                     entryFile,

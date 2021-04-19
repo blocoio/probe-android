@@ -143,8 +143,8 @@ public class OONIAPIClientTest extends RobolectricAbstractTest {
         measurement.is_uploaded = true;
         measurement.save();
 
-        if (write_file){
-            File entryFile = Measurement.getEntryFile(c, measurement.id, measurement.test_name);
+        if (write_file) {
+            File entryFile = Measurement.getEntryFile(a, measurement.id, measurement.test_name);
             entryFile.getParentFile().mkdirs();
             FileUtils.writeStringToFile(
                     entryFile,

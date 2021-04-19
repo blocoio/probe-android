@@ -7,6 +7,7 @@ import org.openobservatory.ooniprobe.RobolectricAbstractTest;
 
 import static org.junit.Assert.assertTrue;
 
+
 @SmallTest
 public class ApplicationTest extends RobolectricAbstractTest {
     @Test

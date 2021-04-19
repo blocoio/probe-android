@@ -8,6 +8,6 @@ import org.openobservatory.ooniprobe.AbstractTest;
 
 @SmallTest public class ApplicationTest extends AbstractTest {
 	@Test public void packageName() {
-		Assert.assertEquals("org.openobservatory.ooniprobe", c.getPackageName());
+		Assert.assertEquals("org.openobservatory.ooniprobe.dev", c.getPackageName());
 	}
 }

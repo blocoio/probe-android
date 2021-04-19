@@ -46,7 +46,6 @@ public class AutomateScreenshotsTest extends AbstractTest {
         scenario.close();
     }
 
-    // TODO: Avoid the needing a clean state and to run after the WebConnectivityTest
     @Test
     public void testTakeScreenshot() {
         //Dashboard

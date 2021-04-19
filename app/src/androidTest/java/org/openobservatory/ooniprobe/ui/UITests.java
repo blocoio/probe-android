@@ -4,6 +4,9 @@ import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import com.raizlabs.android.dbflow.config.FlowManager;
+
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -35,6 +38,11 @@ public class UITests {
 
     @Rule
     public ActivityScenarioRule<MainActivity> activityRule = new ActivityScenarioRule<>(MainActivity.class);
+
+    @BeforeClass
+    public static void beforeClass() {
+        FlowManager.reset();
+    }
 
     @Test
     @Ignore("Flaky test that needs to be re-written")

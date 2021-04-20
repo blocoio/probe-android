@@ -67,7 +67,11 @@ Instead to build the app to stay compliant to F-Droid use `fdroidRelease`, conta
 Run unit tests 
 
 ```
+<<<<<<< HEAD
 ./gradlew testStableFullDebug
+=======
+./gradlew testDevFullDebug
+>>>>>>> c4f6b6af... Configure Jacoco
 ```
 
 Run instrumented tests (requires clean state in the device) 

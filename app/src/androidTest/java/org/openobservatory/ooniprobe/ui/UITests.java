@@ -39,11 +39,6 @@ public class UITests {
     @Rule
     public ActivityScenarioRule<MainActivity> activityRule = new ActivityScenarioRule<>(MainActivity.class);
 
-    @BeforeClass
-    public static void beforeClass() {
-        FlowManager.reset();
-    }
-
     @Test
     @Ignore("Flaky test that needs to be re-written")
     public void testCustomURL() {

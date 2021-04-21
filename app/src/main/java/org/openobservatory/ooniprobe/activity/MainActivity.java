@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.app.ActivityCompat;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -14,6 +15,7 @@ import org.openobservatory.ooniprobe.R;
 import org.openobservatory.ooniprobe.common.Application;
 import org.openobservatory.ooniprobe.common.ThirdPartyServices;
 import org.openobservatory.ooniprobe.common.PreferenceManager;
+import org.openobservatory.ooniprobe.common.service.ServiceUtil;
 import org.openobservatory.ooniprobe.fragment.DashboardFragment;
 import org.openobservatory.ooniprobe.fragment.PreferenceGlobalFragment;
 import org.openobservatory.ooniprobe.fragment.ResultListFragment;
@@ -38,7 +40,7 @@ public class MainActivity extends AbstractActivity implements ConfirmDialogFragm
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getPreferenceManager().isShowOnboarding() && !isUITestRunning()) {
+        if (getPreferenceManager().isShowOnboarding()) {
             startActivity(new Intent(MainActivity.this, OnboardingActivity.class));
             finish();
         }
@@ -61,9 +63,6 @@ public class MainActivity extends AbstractActivity implements ConfirmDialogFragm
                 }
             });
             bottomNavigation.setSelectedItemId(getIntent().getIntExtra(RES_ITEM, R.id.dashboard));
-            if (isUITestRunning()) {
-                return;
-            }
             if (getPreferenceManager().getAppOpenCount() != 0
                     && getPreferenceManager().getAppOpenCount() % PreferenceManager.NOTIFICATION_DIALOG_COUNT == 0
                     && !getPreferenceManager().isNotifications()
@@ -94,7 +93,6 @@ public class MainActivity extends AbstractActivity implements ConfirmDialogFragm
 
 	@Override protected void onResume() {
 		super.onResume();
-		//TODO-SERVICE show RunningActivity
 	}
 
     @Override
@@ -126,16 +124,6 @@ public class MainActivity extends AbstractActivity implements ConfirmDialogFragm
             else if (i == DialogInterface.BUTTON_NEUTRAL){
                 getPreferenceManager().disableAskNotificationDialog();
             }
-        }
-    }
-
-
-    public boolean isUITestRunning() {
-        try {
-            Class.forName("org.openobservatory.ooniprobe.AutomateScreenshotsTest");
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
         }
     }
 }

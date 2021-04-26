@@ -23,7 +23,6 @@ import dagger.Provides;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -84,14 +83,18 @@ public class ApplicationModule {
                 .build();
     }
 
-    @Provides
-    @Singleton
-    OONIAPIClient provideApiClient(OkHttpClient client) {
+    protected OONIAPIClient buildApiClient(OkHttpClient client) {
         return new Retrofit.Builder()
                 .baseUrl(BuildConfig.OONI_API_BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build()
                 .create(OONIAPIClient.class);
+    }
+
+    @Provides
+    @Singleton
+    OONIAPIClient provideApiClient(OkHttpClient client) {
+        return buildApiClient(client);
     }
 }

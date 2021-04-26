@@ -22,8 +22,6 @@ import org.openobservatory.ooniprobe.model.database.Measurement;
 import javax.inject.Inject;
 
 import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class Application extends android.app.Application {
@@ -36,7 +34,7 @@ public class Application extends android.app.Application {
 
 	@Override public void onCreate() {
 		super.onCreate();
-		component = DaggerAppComponent.builder().applicationModule(new ApplicationModule(this)).build();
+		component = buildDagger();
 		component.inject(this);
 
 		FlowManager.init(this);
@@ -48,6 +46,10 @@ public class Application extends android.app.Application {
 			Measurement.deleteUploadedJsons(this);
 		Measurement.deleteOldLogs(this);
 		ThirdPartyServices.reloadConsents(this);
+	}
+
+	protected AppComponent buildDagger() {
+		return DaggerAppComponent.builder().applicationModule(new ApplicationModule(this)).build();
 	}
 
 	public OkHttpClient getOkHttpClient() {

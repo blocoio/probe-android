@@ -8,9 +8,6 @@ import org.openobservatory.ooniprobe.di.TestAppComponent;
 import org.openobservatory.ooniprobe.di.TestApplication;
 
 import static org.junit.Assert.assertTrue;
-import org.openobservatory.ooniprobe.di.TestAppComponent;
-import org.openobservatory.ooniprobe.di.TestApplication;
-
 
 @SmallTest
 public class ApplicationTest extends RobolectricAbstractTest {

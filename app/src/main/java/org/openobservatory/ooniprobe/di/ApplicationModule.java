@@ -10,6 +10,7 @@ import org.openobservatory.ooniprobe.BuildConfig;
 import org.openobservatory.ooniprobe.client.OONIAPIClient;
 import org.openobservatory.ooniprobe.common.DateAdapter;
 import org.openobservatory.ooniprobe.common.TamperingJsonDeserializer;
+import org.openobservatory.ooniprobe.di.annotations.ApiUrl;
 import org.openobservatory.ooniprobe.di.annotations.HeaderInterceptor;
 import org.openobservatory.ooniprobe.model.jsonresult.TestKeys;
 
@@ -83,18 +84,24 @@ public class ApplicationModule {
                 .build();
     }
 
-    protected OONIAPIClient buildApiClient(OkHttpClient client) {
+    protected String getApiUrl() {
+        return BuildConfig.OONI_API_BASE_URL;
+    }
+
+    @Provides
+    protected String provideApiUrl() {
+        return getApiUrl();
+    }
+
+    @Provides
+    @Singleton
+    protected OONIAPIClient provideApiClient(OkHttpClient client, @ApiUrl String url) {
         return new Retrofit.Builder()
-                .baseUrl(BuildConfig.OONI_API_BASE_URL)
+                .baseUrl(url)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build()
                 .create(OONIAPIClient.class);
     }
 
-    @Provides
-    @Singleton
-    OONIAPIClient provideApiClient(OkHttpClient client) {
-        return buildApiClient(client);
-    }
 }

@@ -17,18 +17,12 @@ public class TestAppModule extends ApplicationModule {
 
     private static final String CLIENT_URL = "https://ams-pg.ooni.org";
 
-
     public TestAppModule(Application application) {
         super(application);
     }
 
     @Override
-    public OONIAPIClient buildApiClient(OkHttpClient client) {
-        return new Retrofit.Builder()
-                .baseUrl(CLIENT_URL)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build()
-                .create(OONIAPIClient.class);
+    protected String getApiUrl() {
+        return CLIENT_URL;
     }
 }

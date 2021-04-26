@@ -32,7 +32,7 @@ public class OONIAPIClientTest extends RobolectricAbstractTest {
     @Test
     public void getMeasurementSuccess() {
         final CountDownLatch signal = new CountDownLatch(1);
-        a.getApiClientWithUrl(CLIENT_URL).getMeasurement(EXISTING_REPORT_ID, null).enqueue(new GetMeasurementsCallback() {
+        a.getApiClient().getMeasurement(EXISTING_REPORT_ID, null).enqueue(new GetMeasurementsCallback() {
             @Override
             public void onSuccess(ApiMeasurement.Result result) {
                 Assert.assertNotNull(result);
@@ -68,7 +68,7 @@ public class OONIAPIClientTest extends RobolectricAbstractTest {
     @Test
     public void getMeasurementError() {
         final CountDownLatch signal = new CountDownLatch(1);
-        a.getApiClientWithUrl(CLIENT_URL).getMeasurement(NONEXISTING_REPORT_ID, null).enqueue(new GetMeasurementsCallback() {
+        a.getApiClient().getMeasurement(NONEXISTING_REPORT_ID, null).enqueue(new GetMeasurementsCallback() {
             @Override
             public void onSuccess(ApiMeasurement.Result result) {
                 Assert.fail();
@@ -93,7 +93,7 @@ public class OONIAPIClientTest extends RobolectricAbstractTest {
         final CountDownLatch signal = new CountDownLatch(1);
         Delete.table(Measurement.class);
         addMeasurement(EXISTING_REPORT_ID, false);
-        a.getApiClientWithUrl(CLIENT_URL).checkReportId(EXISTING_REPORT_ID).enqueue(new CheckReportIdCallback() {
+        a.getApiClient().checkReportId(EXISTING_REPORT_ID).enqueue(new CheckReportIdCallback() {
             @Override
             public void onSuccess(Boolean found) {
                 Assert.assertTrue(found);

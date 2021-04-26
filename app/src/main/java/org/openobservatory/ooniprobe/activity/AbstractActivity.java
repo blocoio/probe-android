@@ -8,6 +8,8 @@ import org.openobservatory.ooniprobe.client.OONIAPIClient;
 import org.openobservatory.ooniprobe.common.Application;
 import org.openobservatory.ooniprobe.common.PreferenceManager;
 
+import javax.inject.Inject;
+
 import okhttp3.OkHttpClient;
 
 public abstract class AbstractActivity extends AppCompatActivity {

@@ -35,8 +35,20 @@ android {
 	}
 
 	testOptions {
+		animationsDisabled = true
 		unitTests {
 			includeAndroidResources = true
+		}
+	}
+
+	sourceSets {
+		androidTest {
+			java.srcDirs += "src/sharedTest/java"
+			resources.srcDirs += "src/sharedTest/resources"
+		}
+		test {
+			java.srcDirs += "src/sharedTest/java"
+			resources.srcDirs += "src/sharedTest/resources"
 		}
 	}
 

@@ -20,6 +20,7 @@ public class ApplicationTest extends RobolectricAbstractTest {
     public void testApp() {
         assertTrue(a instanceof TestApplication);
     }
+
     @Test
     public void component() {
         assertTrue(a.component instanceof TestAppComponent);

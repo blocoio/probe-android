@@ -17,6 +17,4 @@ android {
 
 dependencies {
     implementation 'org.ooni:oonimkall:2021.04.07-180801'
-    implementation 'com.google.dagger:dagger:2.34.1'
-    annotationProcessor 'com.google.dagger:dagger-compiler:2.34.1'
 }

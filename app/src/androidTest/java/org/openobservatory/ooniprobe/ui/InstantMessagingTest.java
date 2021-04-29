@@ -17,6 +17,7 @@ import org.openobservatory.ooniprobe.R;
 import org.openobservatory.ooniprobe.ResultFactory;
 import org.openobservatory.ooniprobe.activity.ResultDetailActivity;
 import org.openobservatory.ooniprobe.model.database.Measurement;
+import org.openobservatory.ooniprobe.model.database.Network;
 import org.openobservatory.ooniprobe.model.database.Result;
 import org.openobservatory.ooniprobe.test.suite.InstantMessagingSuite;
 
@@ -34,6 +35,12 @@ import static org.hamcrest.Matchers.containsString;
 @RunWith(AndroidJUnit4.class)
 public class InstantMessagingTest {
 
+    private static final String SUCCESSFUL_OUTCOME = "Working";
+    private static final String BLOCKED_OUTCOME = "Likely blocked";
+
+    private static final String SUCCESSFUL_MEASUREMENT = "OK";
+    private static final String BLOCKED_MEASUREMENT = "Failed";
+
     @ClassRule
     public static final LocaleTestRule localeTestRule = new LocaleTestRule();
 
@@ -44,7 +51,7 @@ public class InstantMessagingTest {
         DatabaseUtils.resetDatabase();
     }
 
-    public void launchActivity(int resultId) {
+    private void launchActivity(int resultId) {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), ResultDetailActivity.class);
         Bundle bundle = new Bundle();
         bundle.putInt("id", resultId);
@@ -84,52 +91,152 @@ public class InstantMessagingTest {
     public void testSuccessWhatsApp() {
         // Arrange
         Result testResult = ResultFactory.createAndSave(new InstantMessagingSuite());
-        Measurement measurement = testResult.getMeasurement("whatsapp");
 
         // Act
         launchActivity(testResult.id);
-
+        onView(withText("WhatsApp Test")).check(matches(isDisplayed())).perform(click());
         // Assert
-        onView(withText("WhatsApp Test"))
-                .check(matches(isDisplayed()))
-                .perform(click());
-
-        onView(withId(R.id.outcome)).check(matches(withText("Working")));
-        onView(withId(R.id.application)).check(matches(withText("OK")));
-        onView(withId(R.id.webApp)).check(matches(withText("OK")));
-        onView(withId(R.id.registrations)).check(matches(withText("OK")));
-
-        onView(withId(R.id.startTime)).check(matches(withText(FormattingUtils.formatStartTime(measurement.start_time))));
-        onView(withId(R.id.runtime)).check(matches(withText(FormattingUtils.formatRunTime(measurement.runtime))));
-        onView(withId(R.id.country)).check(matches(withText(testResult.network.country_code)));
-        onView(withId(R.id.networkName)).check(matches(withText(testResult.network.network_name)));
-        onView(withId(R.id.networkDetail)).check(matches(withText(containsString(testResult.network.asn))));
+        assertMeasurementOutcome(true);
+        assertWhatsAppMeasurement(true);
+        assertMeasurementRuntimeAndNetwork(testResult.getMeasurement("whatsapp"), testResult.network);
     }
 
     @Test
     public void testBlockedWhatsApp() {
         // Arrange
         Result testResult = ResultFactory.createAndSave(new InstantMessagingSuite(), 0, 4);
-        Measurement measurement = testResult.getMeasurement("whatsapp");
 
         // Act
         launchActivity(testResult.id);
+        onView(withText("WhatsApp Test")).check(matches(isDisplayed())).perform(click());
 
         // Assert
-        onView(withText("WhatsApp Test"))
-                .check(matches(isDisplayed()))
-                .perform(click());
+        assertMeasurementOutcome(false);
+        assertWhatsAppMeasurement(false);
+        assertMeasurementRuntimeAndNetwork(testResult.getMeasurement("whatsapp"), testResult.network);
+    }
 
-        onView(withId(R.id.outcome)).check(matches(withText("Likely blocked")));
-        onView(withId(R.id.application)).check(matches(withText("Failed")));
-        onView(withId(R.id.webApp)).check(matches(withText("Failed")));
-        onView(withId(R.id.registrations)).check(matches(withText("Failed")));
+    @Test
+    public void testSuccessTelegram() {
+        // Arrange
+        Result testResult = ResultFactory.createAndSave(new InstantMessagingSuite());
 
+        // Act
+        launchActivity(testResult.id);
+        onView(withText("Telegram Test")).check(matches(isDisplayed())).perform(click());
+
+        // Assert
+        assertMeasurementOutcome(true);
+        assertTelegramMeasurement(true);
+        assertMeasurementRuntimeAndNetwork(testResult.getMeasurement("telegram"), testResult.network);
+    }
+
+    @Test
+    public void testBlockedTelegram() {
+        // Arrange
+        Result testResult = ResultFactory.createAndSave(new InstantMessagingSuite(), 0, 4);
+
+        // Act
+        launchActivity(testResult.id);
+        onView(withText("Telegram Test")).check(matches(isDisplayed())).perform(click());
+
+        // Assert
+        assertMeasurementOutcome(false);
+        assertTelegramMeasurement(false);
+        assertMeasurementRuntimeAndNetwork(testResult.getMeasurement("telegram"), testResult.network);
+    }
+
+    @Test
+    public void testSuccessFacebookMessenger() {
+        // Arrange
+        Result testResult = ResultFactory.createAndSave(new InstantMessagingSuite());
+
+        // Act
+        launchActivity(testResult.id);
+        onView(withText("Facebook Messenger Test")).check(matches(isDisplayed())).perform(click());
+
+        // Assert
+        assertMeasurementOutcome(true);
+        assertFacebookMessengerMeasurement(true);
+        assertMeasurementRuntimeAndNetwork(testResult.getMeasurement("facebook_messenger"), testResult.network);
+    }
+
+    @Test
+    public void testBlockedFacebookMessenger() {
+        // Arrange
+        Result testResult = ResultFactory.createAndSave(new InstantMessagingSuite(), 0, 4);
+
+        // Act
+        launchActivity(testResult.id);
+        onView(withText("Facebook Messenger Test")).check(matches(isDisplayed())).perform(click());
+
+        // Assert
+        assertMeasurementOutcome(false);
+        assertFacebookMessengerMeasurement(false);
+        assertMeasurementRuntimeAndNetwork(testResult.getMeasurement("facebook_messenger"), testResult.network);
+    }
+
+    @Test
+    public void testSuccessSignal() {
+        // Arrange
+        Result testResult = ResultFactory.createAndSave(new InstantMessagingSuite());
+
+        // Act
+        launchActivity(testResult.id);
+        onView(withText("Signal Test")).check(matches(isDisplayed())).perform(click());
+
+        // Assert
+        assertMeasurementOutcome(true);
+        assertMeasurementRuntimeAndNetwork(testResult.getMeasurement("signal"), testResult.network);
+    }
+
+    @Test
+    public void testBlockedSignal() {
+        // Arrange
+        Result testResult = ResultFactory.createAndSave(new InstantMessagingSuite(), 0, 4);
+
+        // Act
+        launchActivity(testResult.id);
+        onView(withText("Signal Test")).check(matches(isDisplayed())).perform(click());
+
+        // Assert
+        assertMeasurementOutcome(false);
+        assertMeasurementRuntimeAndNetwork(testResult.getMeasurement("signal"), testResult.network);
+    }
+
+    private void assertMeasurementOutcome(boolean wasSuccess) {
+        String outcome = wasSuccess ? SUCCESSFUL_OUTCOME : BLOCKED_OUTCOME;
+        onView(withId(R.id.outcome)).check(matches(withText(outcome)));
+    }
+
+    private void assertWhatsAppMeasurement(boolean wasSuccess) {
+        String status = wasSuccess ? SUCCESSFUL_MEASUREMENT : BLOCKED_MEASUREMENT;
+
+        onView(withId(R.id.application)).check(matches(withText(status)));
+        onView(withId(R.id.webApp)).check(matches(withText(status)));
+        onView(withId(R.id.registrations)).check(matches(withText(status)));
+    }
+
+    private void assertTelegramMeasurement(boolean wasSuccess) {
+        String status = wasSuccess ? SUCCESSFUL_MEASUREMENT : BLOCKED_MEASUREMENT;
+
+        onView(withId(R.id.application)).check(matches(withText(status)));
+        onView(withId(R.id.webApp)).check(matches(withText(status)));
+    }
+
+    private void assertFacebookMessengerMeasurement(boolean wasSuccess) {
+        String status = wasSuccess ? SUCCESSFUL_MEASUREMENT : BLOCKED_MEASUREMENT;
+
+        onView(withId(R.id.tcp)).check(matches(withText(status)));
+        onView(withId(R.id.dns)).check(matches(withText(status)));
+    }
+
+    private void assertMeasurementRuntimeAndNetwork(Measurement measurement, Network network) {
         onView(withId(R.id.startTime)).check(matches(withText(FormattingUtils.formatStartTime(measurement.start_time))));
         onView(withId(R.id.runtime)).check(matches(withText(FormattingUtils.formatRunTime(measurement.runtime))));
-        onView(withId(R.id.country)).check(matches(withText(testResult.network.country_code)));
-        onView(withId(R.id.networkName)).check(matches(withText(testResult.network.network_name)));
-        onView(withId(R.id.networkDetail)).check(matches(withText(containsString(testResult.network.asn))));
+        onView(withId(R.id.country)).check(matches(withText(network.country_code)));
+        onView(withId(R.id.networkName)).check(matches(withText(network.network_name)));
+        onView(withId(R.id.networkDetail)).check(matches(withText(containsString(network.asn))));
     }
 
 }

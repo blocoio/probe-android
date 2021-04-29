@@ -32,6 +32,9 @@ import static org.openobservatory.ooniprobe.ui.measurements.UIMeasurementsUtils.
 
 public class CircumventionTest {
 
+    private static final String TEST_RESULTS_NOT_AVAILABLE = "N/A";
+    private static final String TEST_RESULTS_AVAILABLE = "OK";
+
     @ClassRule
     public static final LocaleTestRule localeTestRule = new LocaleTestRule();
 
@@ -92,7 +95,80 @@ public class CircumventionTest {
 
         // Assert
         assertMeasurementOutcome(false);
-        onView(withId(R.id.bootstrap)).check(matches(withText("N/A")));
+        onView(withId(R.id.bootstrap)).check(matches(withText(TEST_RESULTS_NOT_AVAILABLE)));
+        assertMeasurementRuntimeAndNetwork(measurement, testResult.network);
+    }
+
+    @Test
+    public void testSuccessTor() {
+        // Arrange
+        Result testResult = ResultFactory.createAndSave(new CircumventionSuite(), 3, 0);
+        Measurement measurement = testResult.getMeasurement("tor");
+
+        String formattedBridges = FormattingUtils.getFormattedBridges(measurement);
+        String formattedAuthorities = FormattingUtils.getFormattedAuthorities(measurement);
+
+        // Act
+        launchActivity(testResult.id);
+        onView(withText("Tor Test")).check(matches(isDisplayed())).perform(click());
+
+        // Assert
+        assertMeasurementOutcome(true);
+        onView(withId(R.id.bridges)).check(matches(withText(formattedBridges)));
+        onView(withId(R.id.authorities)).check(matches(withText(formattedAuthorities)));
+        assertMeasurementRuntimeAndNetwork(measurement, testResult.network);
+    }
+
+    @Test
+    public void testBlockedTor() {
+        // Arrange
+        Result testResult = ResultFactory.createAndSave(new CircumventionSuite(), 0, 3);
+        Measurement measurement = testResult.getMeasurement("tor");
+
+        // Act
+        launchActivity(testResult.id);
+        onView(withText("Tor Test")).check(matches(isDisplayed())).perform(click());
+
+        // Assert
+        assertMeasurementOutcome(false);
+        onView(withId(R.id.bridges)).check(matches(withText(TEST_RESULTS_NOT_AVAILABLE)));
+        onView(withId(R.id.authorities)).check(matches(withText(TEST_RESULTS_NOT_AVAILABLE)));
+        assertMeasurementRuntimeAndNetwork(measurement, testResult.network);
+    }
+
+    @Test
+    public void testSuccessfulRiseUpVPN() {
+        // Arrange
+        Result testResult = ResultFactory.createAndSave(new CircumventionSuite(), 3, 0);
+        Measurement measurement = testResult.getMeasurement("riseupvpn");
+
+        // Act
+        launchActivity(testResult.id);
+        onView(withText("RiseupVPN Test")).check(matches(isDisplayed())).perform(click());
+
+        // Assert
+        assertMeasurementOutcome(true);
+        onView(withId(R.id.bootstrap_value)).check(matches(withText(TEST_RESULTS_AVAILABLE)));
+        onView(withId(R.id.openvpn_value)).check(matches(withText(TEST_RESULTS_AVAILABLE)));
+        onView(withId(R.id.bridges_value)).check(matches(withText(TEST_RESULTS_AVAILABLE)));
+        assertMeasurementRuntimeAndNetwork(measurement, testResult.network);
+    }
+
+    @Test
+    public void testBlockedRiseUpVPN() {
+        // Arrange
+        Result testResult = ResultFactory.createAndSave(new CircumventionSuite(), 0, 3);
+        Measurement measurement = testResult.getMeasurement("riseupvpn");
+
+        // Act
+        launchActivity(testResult.id);
+        onView(withText("RiseupVPN Test")).check(matches(isDisplayed())).perform(click());
+
+        // Assert
+        assertMeasurementOutcome(false);
+        onView(withId(R.id.bootstrap_value)).check(matches(withText("Blocked")));
+        onView(withId(R.id.openvpn_value)).check(matches(withText("1 blocked")));
+        onView(withId(R.id.bridges_value)).check(matches(withText("1 blocked")));
         assertMeasurementRuntimeAndNetwork(measurement, testResult.network);
     }
 

@@ -54,10 +54,10 @@ public class MeasurementFactory {
                 result = "{\"registration_server_status\":\"ok\",\"whatsapp_endpoints_status\":\"ok\",\"whatsapp_web_status\":\"ok\"}";
                 break;
             case "telegram":
-                result = "{\"telegram_http_blocking\":\"ok\",\"telegram_tcp_blocking\":\"ok\",\"telegram_web_status\":\"ok\"}";
+                result = "{\"telegram_http_blocking\":\"false\",\"telegram_tcp_blocking\":\"false\",\"telegram_web_status\":\"ok\"}";
                 break;
             case "facebook_messenger":
-                result = "{\"facebook_tcp_blocking\":\"ok\",\"facebook_dns_blocking\":\"ok\"}";
+                result = "{\"facebook_tcp_blocking\":\"false\",\"facebook_dns_blocking\":\"ok\"}";
                 break;
             case "signal":
                 result = "{\"signal_backend_status\":\"ok\",\"signal_backend_failure\":\"ok\"}";
@@ -76,10 +76,10 @@ public class MeasurementFactory {
                 result = "{\"registration_server_status\":\"blocked\",\"whatsapp_endpoints_status\":\"blocked\",\"whatsapp_web_status\":\"blocked\"}";
                 break;
             case "telegram":
-                result = "{\"telegram_http_blocking\":\"blocked\",\"telegram_tcp_blocking\":\"blocked\",\"telegram_web_status\":\"blocked\"}";
+                result = "{\"telegram_http_blocking\":\"true\",\"telegram_tcp_blocking\":\"true\",\"telegram_web_status\":\"blocked\"}";
                 break;
             case "facebook_messenger":
-                result = "{\"facebook_tcp_blocking\":\"blocked\",\"facebook_dns_blocking\":\"blocked\"}";
+                result = "{\"facebook_tcp_blocking\":\"true\",\"facebook_dns_blocking\":\"true\"}";
                 break;
             case "signal":
                 result = "{\"signal_backend_status\":\"blocked\",\"signal_backend_failure\":\"blocked\"}";

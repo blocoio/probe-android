@@ -48,17 +48,17 @@ public class InstantMessagingTest {
     @ClassRule
     public static final LocaleTestRule localeTestRule = new LocaleTestRule();
 
-    static Result testResult;
     public ActivityScenario<ResultDetailActivity> scenario;
 
     @Before
     public void setUp() {
         DatabaseUtils.resetDatabase();
-        testResult = ResultFactory.createAndSave(new InstantMessagingSuite());
+    }
 
+    public void launchActivity(int resultId) {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), ResultDetailActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putInt("id", testResult.id);
+        bundle.putInt("id", resultId);
         intent.putExtras(bundle);
 
         scenario = ActivityScenario.launch(intent);
@@ -66,6 +66,13 @@ public class InstantMessagingTest {
 
     @Test
     public void testHeaderData() {
+        // Arrange
+        Result testResult = ResultFactory.createAndSave(new InstantMessagingSuite(), 3, 1);
+
+        // Act
+        launchActivity(testResult.id);
+
+        // Assert
         onView(withId(R.id.pager)).perform(swipeLeft());
         onView(withId(R.id.download)).check(matches(withText(testResult.getFormattedDataUsageDown())));
     }

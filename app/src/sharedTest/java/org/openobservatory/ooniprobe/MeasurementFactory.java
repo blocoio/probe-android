@@ -5,7 +5,6 @@ import org.openobservatory.ooniprobe.model.database.Result;
 import org.openobservatory.ooniprobe.model.database.Url;
 import org.openobservatory.ooniprobe.test.test.AbstractTest;
 
-
 import io.bloco.faker.Faker;
 
 public class MeasurementFactory {
@@ -50,6 +49,7 @@ public class MeasurementFactory {
     private static String getAccessibleTestKeyFrom(AbstractTest testType) {
         String result;
         switch (testType.getName()) {
+            // Instant Messaging
             case "whatsapp":
                 result = "{\"registration_server_status\":\"ok\",\"whatsapp_endpoints_status\":\"ok\",\"whatsapp_web_status\":\"ok\"}";
                 break;
@@ -63,6 +63,19 @@ public class MeasurementFactory {
                 result = "{\"signal_backend_status\":\"ok\",\"signal_backend_failure\":\"ok\"}";
                 break;
 
+            // Circumvention
+            case "psiphon":
+                result = "{\"bootstrap_time\":"+faker.number.positive(5.0, 100.0) +"}";
+                break;
+
+            case "tor":
+                result = "{\"dir_port_accessible\":7,\"dir_port_total\":10,\"obfs4_accessible\":14,\"obfs4_total\":15,\"or_port_accessible\":0,\"or_port_dirauth_accessible\":10,\"or_port_dirauth_total\":10,\"or_port_total\":0}";
+                break;
+
+            case "riseupvpn":
+                result = "{\"ca_cert_status\":true,\"transport_status\":{\"obfs4\":\"ok\",\"openvpn\":\"ok\"}}";
+                break;
+
             default: result = "{}";
         }
 
@@ -72,6 +85,7 @@ public class MeasurementFactory {
     private static String getBlockedTestKeyFrom(AbstractTest testType) {
         String result;
         switch (testType.getName()) {
+            // Instant Messaging
             case "whatsapp":
                 result = "{\"registration_server_status\":\"blocked\",\"whatsapp_endpoints_status\":\"blocked\",\"whatsapp_web_status\":\"blocked\"}";
                 break;
@@ -85,6 +99,12 @@ public class MeasurementFactory {
                 result = "{\"signal_backend_status\":\"blocked\",\"signal_backend_failure\":\"blocked\"}";
                 break;
 
+            // Circumvention
+            case "riseupvpn":
+                result = "{\"ca_cert_status\":false,\"transport_status\":{\"obfs4\":\"blocked\",\"openvpn\":\"blocked\"}}";
+                break;
+
+            case "tor":
             default: result = "{}";
         }
 

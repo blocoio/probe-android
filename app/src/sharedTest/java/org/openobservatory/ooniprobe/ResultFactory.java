@@ -5,11 +5,15 @@ import org.openobservatory.ooniprobe.model.database.Network;
 import org.openobservatory.ooniprobe.model.database.Result;
 import org.openobservatory.ooniprobe.model.database.Url;
 import org.openobservatory.ooniprobe.test.suite.AbstractSuite;
+import org.openobservatory.ooniprobe.test.suite.CircumventionSuite;
 import org.openobservatory.ooniprobe.test.suite.InstantMessagingSuite;
 import org.openobservatory.ooniprobe.test.test.AbstractTest;
 import org.openobservatory.ooniprobe.test.test.FacebookMessenger;
+import org.openobservatory.ooniprobe.test.test.Psiphon;
+import org.openobservatory.ooniprobe.test.test.RiseupVPN;
 import org.openobservatory.ooniprobe.test.test.Signal;
 import org.openobservatory.ooniprobe.test.test.Telegram;
+import org.openobservatory.ooniprobe.test.test.Tor;
 import org.openobservatory.ooniprobe.test.test.Whatsapp;
 
 import java.util.ArrayList;
@@ -18,7 +22,7 @@ import java.util.List;
 
 import io.bloco.faker.Faker;
 
-import static org.openobservatory.ooniprobe.InstantMessagingTestSuiteUtils.populateInstantMessagingMeasurements;
+import static org.openobservatory.ooniprobe.utils.TestSuiteUtils.populateMeasurements;
 
 public class ResultFactory {
 
@@ -55,9 +59,9 @@ public class ResultFactory {
      * Saves a result in the DB and returns it with the given number of measurements, and
      * all related model objects in the DB.
      *
-     * @param suite               type of result (ex: Websites, Instant Messaging, Circumvention, Performance)
+     * @param suite                  type of result (ex: Websites, Instant Messaging, Circumvention, Performance)
      * @param accessibleMeasurements number of accessible measurements
-     * @param blockedMeasurements  number of blocked measurements
+     * @param blockedMeasurements    number of blocked measurements
      * @return result with
      * @throws IllegalArgumentException for excess number of measurements
      */
@@ -70,8 +74,28 @@ public class ResultFactory {
         List<AbstractTest> accessibleTestTypes = new ArrayList<>();
         List<AbstractTest> blockedTestTypes = new ArrayList<>();
 
-        if (suite instanceof InstantMessagingSuite) {
-            populateInstantMessagingMeasurements(
+        if (suite instanceof InstantMessagingSuite || suite instanceof CircumventionSuite) {
+            List<AbstractTest> measurementTestTypes = null;
+
+            if (suite instanceof InstantMessagingSuite) {
+                measurementTestTypes = Arrays.asList(
+                        new FacebookMessenger(),
+                        new Telegram(),
+                        new Whatsapp(),
+                        new Signal()
+                );
+            }
+
+            if (suite instanceof CircumventionSuite) {
+                measurementTestTypes = Arrays.asList(
+                        new Psiphon(),
+                        new Tor(),
+                        new RiseupVPN()
+                );
+            }
+
+            populateMeasurements(
+                    measurementTestTypes,
                     accessibleMeasurements,
                     accessibleTestTypes,
                     blockedMeasurements,
@@ -110,11 +134,6 @@ public class ResultFactory {
         tempResult.save();
 
         return tempResult;
-    }
-
-
-    public enum GroupName {
-        INSTANT_MESSAGING;
     }
 
 }

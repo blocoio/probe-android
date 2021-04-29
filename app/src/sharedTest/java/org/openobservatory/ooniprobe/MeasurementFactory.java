@@ -101,7 +101,7 @@ public class MeasurementFactory {
 
             // Circumvention
             case "riseupvpn":
-                result = "{\"ca_cert_status\":false,\"transport_status\":{\"obfs4\":\"blocked\",\"openvpn\":\"blocked\"}}";
+                result = "{\"ca_cert_status\":false,\"failing_gateways\":[{\"ip\":\"10.0.0.0\",\"port\":\"8000\",\"transport_type\":\"openvpn\"}, {\"ip\":\"10.0.0.0\",\"port\":\"8000\",\"transport_type\":\"obfs4\"}]}";
                 break;
 
             case "tor":

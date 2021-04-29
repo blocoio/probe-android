@@ -16,7 +16,7 @@ public class MeasurementFactory {
             AbstractTest testType,
             Result result,
             Url url,
-            boolean hasFailed
+            boolean wasBlocked
     ) {
 
         Measurement temp = new Measurement();
@@ -25,15 +25,14 @@ public class MeasurementFactory {
         temp.result = result;
         temp.is_done = true;
         temp.is_uploaded = true;
-        temp.is_failed = hasFailed;
-        temp.failure_msg = hasFailed ? "error" : null;
+        temp.is_failed = false;
         temp.is_upload_failed = false;
         temp.is_rerun = false;
-        temp.is_anomaly = false;
+        temp.is_anomaly = wasBlocked;
         temp.start_time = faker.date.forward();
         temp.test_name = testType.getName();
         temp.report_id = String.valueOf(result.id);
-        temp.test_keys = getTestKeyFrom(testType, hasFailed);
+        temp.test_keys = getTestKeyFrom(testType, wasBlocked);
         temp.runtime = faker.number.positive();
         temp.url = url;
 
@@ -42,17 +41,26 @@ public class MeasurementFactory {
 
     private static String getTestKeyFrom(AbstractTest testType, boolean hasFailed) {
         if (hasFailed) {
-            return getFailedTestKey(testType);
+            return getBlockedTestKeyFrom(testType);
         }
 
-        return getSuccessTestKeyFrom(testType);
+        return getAccessibleTestKeyFrom(testType);
     }
 
-    private static String getSuccessTestKeyFrom(AbstractTest testType) {
+    private static String getAccessibleTestKeyFrom(AbstractTest testType) {
         String result;
         switch (testType.getName()) {
             case "whatsapp":
                 result = "{\"registration_server_status\":\"ok\",\"whatsapp_endpoints_status\":\"ok\",\"whatsapp_web_status\":\"ok\"}";
+                break;
+            case "telegram":
+                result = "{\"telegram_http_blocking\":\"ok\",\"telegram_tcp_blocking\":\"ok\",\"telegram_web_status\":\"ok\"}";
+                break;
+            case "facebook_messenger":
+                result = "{\"facebook_tcp_blocking\":\"ok\",\"facebook_dns_blocking\":\"ok\"}";
+                break;
+            case "signal":
+                result = "{\"signal_backend_status\":\"ok\",\"signal_backend_failure\":\"ok\"}";
                 break;
 
             default: result = "{}";
@@ -61,11 +69,20 @@ public class MeasurementFactory {
         return result;
     }
 
-    private static String getFailedTestKey(AbstractTest testType) {
+    private static String getBlockedTestKeyFrom(AbstractTest testType) {
         String result;
         switch (testType.getName()) {
             case "whatsapp":
                 result = "{\"registration_server_status\":\"blocked\",\"whatsapp_endpoints_status\":\"blocked\",\"whatsapp_web_status\":\"blocked\"}";
+                break;
+            case "telegram":
+                result = "{\"telegram_http_blocking\":\"blocked\",\"telegram_tcp_blocking\":\"blocked\",\"telegram_web_status\":\"blocked\"}";
+                break;
+            case "facebook_messenger":
+                result = "{\"facebook_tcp_blocking\":\"blocked\",\"facebook_dns_blocking\":\"blocked\"}";
+                break;
+            case "signal":
+                result = "{\"signal_backend_status\":\"blocked\",\"signal_backend_failure\":\"blocked\"}";
                 break;
 
             default: result = "{}";

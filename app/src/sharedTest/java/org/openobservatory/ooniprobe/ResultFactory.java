@@ -13,13 +13,19 @@ import org.openobservatory.ooniprobe.test.test.Telegram;
 import org.openobservatory.ooniprobe.test.test.Whatsapp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import io.bloco.faker.Faker;
 
+import static org.openobservatory.ooniprobe.InstantMessagingTestSuiteUtils.populateInstantMessagingMeasurements;
+
 public class ResultFactory {
 
     private static final Faker faker = new Faker();
+
+    private static final int DEFAULT_SUCCESS_MEASUREMENTS = 4;
+    private static final int DEFAULT_FAILED_MEASUREMENTS = 0;
 
     public static Result build(AbstractSuite suite) {
         Result temp = new Result();
@@ -34,21 +40,53 @@ public class ResultFactory {
         return temp;
     }
 
+    /**
+     * Saves a result in the DB and returns it with the 4 measurements, and all related model
+     * objects in the DB.
+     *
+     * @param suite type of result (ex: Websites, Instant Messaging, Circumvention, Performance)
+     * @return result with
+     */
     public static Result createAndSave(AbstractSuite suite) {
-
-        List<AbstractTest> testTypes = new ArrayList<>();
-
-        if (suite instanceof InstantMessagingSuite) {
-            testTypes.add(new FacebookMessenger());
-            testTypes.add(new Telegram());
-            testTypes.add(new Whatsapp());
-            testTypes.add(new Signal());
-        }
-
-        return createAndSave(suite, testTypes);
+        return createAndSave(suite, DEFAULT_SUCCESS_MEASUREMENTS, DEFAULT_FAILED_MEASUREMENTS);
     }
 
-    private static Result createAndSave(AbstractSuite suite, List<AbstractTest> testTypes) {
+    /**
+     * Saves a result in the DB and returns it with the given number of measurements, and
+     * all related model objects in the DB.
+     *
+     * @param suite               type of result (ex: Websites, Instant Messaging, Circumvention, Performance)
+     * @param accessibleMeasurements number of accessible measurements
+     * @param blockedMeasurements  number of blocked measurements
+     * @return result with
+     * @throws IllegalArgumentException for excess number of measurements
+     */
+    public static Result createAndSave(
+            AbstractSuite suite,
+            int accessibleMeasurements,
+            int blockedMeasurements
+    ) throws IllegalArgumentException {
+
+        List<AbstractTest> accessibleTestTypes = new ArrayList<>();
+        List<AbstractTest> blockedTestTypes = new ArrayList<>();
+
+        if (suite instanceof InstantMessagingSuite) {
+            populateInstantMessagingMeasurements(
+                    accessibleMeasurements,
+                    accessibleTestTypes,
+                    blockedMeasurements,
+                    blockedTestTypes
+            );
+        }
+
+        return createAndSave(suite, accessibleTestTypes, blockedTestTypes);
+    }
+
+    private static Result createAndSave(
+            AbstractSuite suite,
+            List<AbstractTest> successTestTypes,
+            List<AbstractTest> failedTestTypes
+    ) {
         Result tempResult = ResultFactory.build(suite);
 
         Url tempUrl = UrlFactory.build();
@@ -58,17 +96,22 @@ public class ResultFactory {
         tempResult.network = tempNetwork;
         tempNetwork.save();
 
-        testTypes.forEach(type -> {
+        successTestTypes.forEach(type -> {
             Measurement temp = MeasurementFactory.build(type, tempResult, tempUrl, false);
             temp.save();
         });
 
+        failedTestTypes.forEach(type -> {
+            Measurement temp = MeasurementFactory.build(type, tempResult, tempUrl, true);
+            temp.save();
+        });
 
         tempResult.getMeasurements();
         tempResult.save();
 
         return tempResult;
     }
+
 
     public enum GroupName {
         INSTANT_MESSAGING;

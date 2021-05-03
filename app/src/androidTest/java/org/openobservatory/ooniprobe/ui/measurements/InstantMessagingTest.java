@@ -1,24 +1,10 @@
 package org.openobservatory.ooniprobe.ui.measurements;
 
-import android.content.Intent;
-import android.os.Bundle;
-
-import androidx.test.core.app.ActivityScenario;
-import androidx.test.core.app.ApplicationProvider;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.openobservatory.ooniprobe.R;
 import org.openobservatory.ooniprobe.ResultFactory;
-import org.openobservatory.ooniprobe.activity.ResultDetailActivity;
 import org.openobservatory.ooniprobe.model.database.Result;
 import org.openobservatory.ooniprobe.test.suite.InstantMessagingSuite;
-import org.openobservatory.ooniprobe.utils.DatabaseUtils;
-
-import tools.fastlane.screengrab.locale.LocaleTestRule;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -27,27 +13,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-@RunWith(AndroidJUnit4.class)
 public class InstantMessagingTest extends MeasurementScreen {
-
-    @ClassRule
-    public static final LocaleTestRule localeTestRule = new LocaleTestRule();
-
-    public ActivityScenario<ResultDetailActivity> scenario;
-
-    @Before
-    public void setUp() {
-        DatabaseUtils.resetDatabase();
-    }
-
-    private void launchActivity(int resultId) {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), ResultDetailActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putInt("id", resultId);
-        intent.putExtras(bundle);
-
-        scenario = ActivityScenario.launch(intent);
-    }
 
     @Test
     public void testHeaderData() {
@@ -55,7 +21,7 @@ public class InstantMessagingTest extends MeasurementScreen {
         Result testResult = ResultFactory.createAndSave(new InstantMessagingSuite());
 
         // Act
-        launchActivity(testResult.id);
+        launchDetails(testResult.id);
 
         // Assert
         assertMeasurementHeader(testResult);
@@ -67,7 +33,7 @@ public class InstantMessagingTest extends MeasurementScreen {
         Result testResult = ResultFactory.createAndSave(new InstantMessagingSuite());
 
         // Act
-        launchActivity(testResult.id);
+        launchDetails(testResult.id);
         onView(withText("WhatsApp Test")).check(matches(isDisplayed())).perform(click());
         // Assert
         assertMeasurementOutcome(true);
@@ -81,7 +47,7 @@ public class InstantMessagingTest extends MeasurementScreen {
         Result testResult = ResultFactory.createAndSave(new InstantMessagingSuite(), 0, 4);
 
         // Act
-        launchActivity(testResult.id);
+        launchDetails(testResult.id);
         onView(withText("WhatsApp Test")).check(matches(isDisplayed())).perform(click());
 
         // Assert
@@ -96,7 +62,7 @@ public class InstantMessagingTest extends MeasurementScreen {
         Result testResult = ResultFactory.createAndSave(new InstantMessagingSuite());
 
         // Act
-        launchActivity(testResult.id);
+        launchDetails(testResult.id);
         onView(withText("Telegram Test")).check(matches(isDisplayed())).perform(click());
 
         // Assert
@@ -111,7 +77,7 @@ public class InstantMessagingTest extends MeasurementScreen {
         Result testResult = ResultFactory.createAndSave(new InstantMessagingSuite(), 0, 4);
 
         // Act
-        launchActivity(testResult.id);
+        launchDetails(testResult.id);
         onView(withText("Telegram Test")).check(matches(isDisplayed())).perform(click());
 
         // Assert
@@ -126,7 +92,7 @@ public class InstantMessagingTest extends MeasurementScreen {
         Result testResult = ResultFactory.createAndSave(new InstantMessagingSuite());
 
         // Act
-        launchActivity(testResult.id);
+        launchDetails(testResult.id);
         onView(withText("Facebook Messenger Test")).check(matches(isDisplayed())).perform(click());
 
         // Assert
@@ -141,7 +107,7 @@ public class InstantMessagingTest extends MeasurementScreen {
         Result testResult = ResultFactory.createAndSave(new InstantMessagingSuite(), 0, 4);
 
         // Act
-        launchActivity(testResult.id);
+        launchDetails(testResult.id);
         onView(withText("Facebook Messenger Test")).check(matches(isDisplayed())).perform(click());
 
         // Assert
@@ -156,7 +122,7 @@ public class InstantMessagingTest extends MeasurementScreen {
         Result testResult = ResultFactory.createAndSave(new InstantMessagingSuite());
 
         // Act
-        launchActivity(testResult.id);
+        launchDetails(testResult.id);
         onView(withText("Signal Test")).check(matches(isDisplayed())).perform(click());
 
         // Assert
@@ -170,7 +136,7 @@ public class InstantMessagingTest extends MeasurementScreen {
         Result testResult = ResultFactory.createAndSave(new InstantMessagingSuite(), 0, 4);
 
         // Act
-        launchActivity(testResult.id);
+        launchDetails(testResult.id);
         onView(withText("Signal Test")).check(matches(isDisplayed())).perform(click());
 
         // Assert

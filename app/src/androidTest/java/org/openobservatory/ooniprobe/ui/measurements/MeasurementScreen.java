@@ -1,13 +1,30 @@
 package org.openobservatory.ooniprobe.ui.measurements;
 
+import android.content.Intent;
+import android.os.Bundle;
+
+import androidx.test.core.app.ActivityScenario;
+import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openobservatory.ooniprobe.AbstractTest;
 import org.openobservatory.ooniprobe.R;
+import org.openobservatory.ooniprobe.activity.MainActivity;
+import org.openobservatory.ooniprobe.activity.ResultDetailActivity;
 import org.openobservatory.ooniprobe.model.database.Measurement;
 import org.openobservatory.ooniprobe.model.database.Network;
 import org.openobservatory.ooniprobe.model.database.Result;
+import org.openobservatory.ooniprobe.utils.DatabaseUtils;
 import org.openobservatory.ooniprobe.utils.FormattingUtils;
 
+import tools.fastlane.screengrab.locale.LocaleTestRule;
+
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
@@ -15,6 +32,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.containsString;
 
+@RunWith(AndroidJUnit4.class)
 public class MeasurementScreen extends AbstractTest {
 
     protected final String SUCCESSFUL_MEASUREMENT
@@ -33,6 +51,36 @@ public class MeasurementScreen extends AbstractTest {
 
     protected final String BLOCKED_OUTCOME
             = getResourceString(R.string.TestResults_Details_Websites_LikelyBlocked_Hero_Title);
+
+    @ClassRule
+    public static final LocaleTestRule localeTestRule = new LocaleTestRule();
+
+    public ActivityScenario<ResultDetailActivity> scenario;
+
+    @Before
+    public void setUp() {
+        DatabaseUtils.resetDatabase();
+    }
+
+    public void launchDetails(int resultId) {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), ResultDetailActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt("id", resultId);
+        intent.putExtras(bundle);
+
+        scenario = ActivityScenario.launch(intent);
+    }
+
+    public void launchResults() {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
+        scenario = ActivityScenario.launch(intent);
+        onView(withId( R.id.testResults)).perform(click());
+    }
+
+    @Test
+    public void testOpenResultDetails(){
+        launchResults();
+    }
 
     void assertMeasurementHeader(Result result) {
         // Page 1

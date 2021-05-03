@@ -1,24 +1,12 @@
 package org.openobservatory.ooniprobe.ui.measurements;
 
-import android.content.Intent;
-import android.os.Bundle;
-
-import androidx.test.core.app.ActivityScenario;
-import androidx.test.core.app.ApplicationProvider;
-
-import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.openobservatory.ooniprobe.R;
 import org.openobservatory.ooniprobe.ResultFactory;
-import org.openobservatory.ooniprobe.activity.ResultDetailActivity;
 import org.openobservatory.ooniprobe.model.database.Measurement;
 import org.openobservatory.ooniprobe.model.database.Result;
 import org.openobservatory.ooniprobe.test.suite.CircumventionSuite;
-import org.openobservatory.ooniprobe.utils.DatabaseUtils;
 import org.openobservatory.ooniprobe.utils.FormattingUtils;
-
-import tools.fastlane.screengrab.locale.LocaleTestRule;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -29,32 +17,13 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
 public class CircumventionTest extends MeasurementScreen {
 
-    @ClassRule
-    public static final LocaleTestRule localeTestRule = new LocaleTestRule();
-
-    public ActivityScenario<ResultDetailActivity> scenario;
-
-    @Before
-    public void setUp() {
-        DatabaseUtils.resetDatabase();
-    }
-
-    private void launchActivity(int resultId) {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), ResultDetailActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putInt("id", resultId);
-        intent.putExtras(bundle);
-
-        scenario = ActivityScenario.launch(intent);
-    }
-
     @Test
     public void testHeaderData() {
         // Arrange
         Result testResult = ResultFactory.createAndSave(new CircumventionSuite(), 3, 0);
 
         // Act
-        launchActivity(testResult.id);
+        launchDetails(testResult.id);
 
         // Assert
         assertMeasurementHeader(testResult);
@@ -68,7 +37,7 @@ public class CircumventionTest extends MeasurementScreen {
         String formattedBootstrap = FormattingUtils.formatBootstrap(measurement.getTestKeys().bootstrap_time);
 
         // Act
-        launchActivity(testResult.id);
+        launchDetails(testResult.id);
         onView(withText("Psiphon Test")).check(matches(isDisplayed())).perform(click());
 
         // Assert
@@ -84,7 +53,7 @@ public class CircumventionTest extends MeasurementScreen {
         Measurement measurement = testResult.getMeasurement("psiphon");
 
         // Act
-        launchActivity(testResult.id);
+        launchDetails(testResult.id);
         onView(withText("Psiphon Test")).check(matches(isDisplayed())).perform(click());
 
         // Assert
@@ -103,7 +72,7 @@ public class CircumventionTest extends MeasurementScreen {
         String formattedAuthorities = FormattingUtils.getFormattedAuthorities(measurement);
 
         // Act
-        launchActivity(testResult.id);
+        launchDetails(testResult.id);
         onView(withText("Tor Test")).check(matches(isDisplayed())).perform(click());
 
         // Assert
@@ -120,7 +89,7 @@ public class CircumventionTest extends MeasurementScreen {
         Measurement measurement = testResult.getMeasurement("tor");
 
         // Act
-        launchActivity(testResult.id);
+        launchDetails(testResult.id);
         onView(withText("Tor Test")).check(matches(isDisplayed())).perform(click());
 
         // Assert
@@ -137,7 +106,7 @@ public class CircumventionTest extends MeasurementScreen {
         Measurement measurement = testResult.getMeasurement("riseupvpn");
 
         // Act
-        launchActivity(testResult.id);
+        launchDetails(testResult.id);
         onView(withText("RiseupVPN Test")).check(matches(isDisplayed())).perform(click());
 
         // Assert
@@ -155,7 +124,7 @@ public class CircumventionTest extends MeasurementScreen {
         Measurement measurement = testResult.getMeasurement("riseupvpn");
 
         // Act
-        launchActivity(testResult.id);
+        launchDetails(testResult.id);
         onView(withText("RiseupVPN Test")).check(matches(isDisplayed())).perform(click());
 
         // Assert

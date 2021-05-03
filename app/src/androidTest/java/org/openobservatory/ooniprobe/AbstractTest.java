@@ -15,4 +15,9 @@ public class AbstractTest {
 		c = InstrumentationRegistry.getInstrumentation().getTargetContext();
 		a = (Application) c.getApplicationContext();
 	}
+
+	protected String getResourceString(int id) {
+		Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
+		return targetContext.getResources().getString(id);
+	}
 }

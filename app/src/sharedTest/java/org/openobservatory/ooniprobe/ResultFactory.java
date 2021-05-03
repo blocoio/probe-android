@@ -15,8 +15,8 @@ import org.openobservatory.ooniprobe.test.test.Signal;
 import org.openobservatory.ooniprobe.test.test.Telegram;
 import org.openobservatory.ooniprobe.test.test.Tor;
 import org.openobservatory.ooniprobe.test.test.Whatsapp;
+import org.openobservatory.ooniprobe.utils.models.TestSuiteMeasurements;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -71,11 +71,8 @@ public class ResultFactory {
             int blockedMeasurements
     ) throws IllegalArgumentException {
 
-        List<AbstractTest> accessibleTestTypes = new ArrayList<>();
-        List<AbstractTest> blockedTestTypes = new ArrayList<>();
-
+        List<AbstractTest> measurementTestTypes = null;
         if (suite instanceof InstantMessagingSuite || suite instanceof CircumventionSuite) {
-            List<AbstractTest> measurementTestTypes = null;
 
             if (suite instanceof InstantMessagingSuite) {
                 measurementTestTypes = Arrays.asList(
@@ -93,17 +90,19 @@ public class ResultFactory {
                         new RiseupVPN()
                 );
             }
-
-            populateMeasurements(
-                    measurementTestTypes,
-                    accessibleMeasurements,
-                    accessibleTestTypes,
-                    blockedMeasurements,
-                    blockedTestTypes
-            );
         }
 
-        return createAndSave(suite, accessibleTestTypes, blockedTestTypes);
+        TestSuiteMeasurements measurements = populateMeasurements(
+                measurementTestTypes,
+                accessibleMeasurements,
+                blockedMeasurements
+        );
+
+        return createAndSave(
+                suite,
+                measurements.getAccessibleTestTypes(),
+                measurements.getBlockedTestTypes()
+        );
     }
 
     private static Result createAndSave(

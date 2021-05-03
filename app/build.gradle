@@ -41,6 +41,7 @@ android {
 		}
 	}
 
+	// Factories are useful for both UI and Unit Testing as such they exist in a shared folder
 	sourceSets {
 		androidTest {
 			java.srcDirs += "src/sharedTest/java"
@@ -134,12 +135,12 @@ dependencies {
 	fullImplementation 'io.sentry:sentry-android:4.0.0'
 
 // Dependency Injection
-	implementation 'com.google.dagger:dagger:2.34.1'
-	annotationProcessor 'com.google.dagger:dagger-compiler:2.34.1'
+	implementation 'com.google.dagger:dagger:2.35'
+	annotationProcessor 'com.google.dagger:dagger-compiler:2.35'
 
 // Testing
 	// DI
-	testAnnotationProcessor "com.google.dagger:dagger-compiler:2.34.1"
+	testAnnotationProcessor "com.google.dagger:dagger-compiler:2.35"
 
 	// Unit Testing
 	testImplementation 'junit:junit:4.13.2'
@@ -148,7 +149,7 @@ dependencies {
 	testImplementation 'androidx.test:rules:1.3.0'
 	testImplementation 'com.github.blocoio:faker:1.2.8'
 	testImplementation 'org.mockito:mockito-core:3.9.0'
-	testImplementation 'org.robolectric:robolectric:4.4'
+	testImplementation 'org.robolectric:robolectric:4.5.1'
 
 	// Instrumentation Testing
 	androidTestImplementation 'tools.fastlane:screengrab:2.0.0'

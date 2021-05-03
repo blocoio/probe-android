@@ -26,14 +26,8 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static org.openobservatory.ooniprobe.ui.measurements.UIMeasurementsUtils.assertMeasurementHeader;
-import static org.openobservatory.ooniprobe.ui.measurements.UIMeasurementsUtils.assertMeasurementOutcome;
-import static org.openobservatory.ooniprobe.ui.measurements.UIMeasurementsUtils.assertMeasurementRuntimeAndNetwork;
 
-public class CircumventionTest {
-
-    private static final String TEST_RESULTS_NOT_AVAILABLE = "N/A";
-    private static final String TEST_RESULTS_AVAILABLE = "OK";
+public class CircumventionTest extends MeasurementScreen {
 
     @ClassRule
     public static final LocaleTestRule localeTestRule = new LocaleTestRule();

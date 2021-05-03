@@ -26,15 +26,9 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static org.openobservatory.ooniprobe.ui.measurements.UIMeasurementsUtils.assertMeasurementHeader;
-import static org.openobservatory.ooniprobe.ui.measurements.UIMeasurementsUtils.assertMeasurementOutcome;
-import static org.openobservatory.ooniprobe.ui.measurements.UIMeasurementsUtils.assertMeasurementRuntimeAndNetwork;
 
 @RunWith(AndroidJUnit4.class)
-public class InstantMessagingTest {
-
-    private static final String SUCCESSFUL_MEASUREMENT = "OK";
-    private static final String BLOCKED_MEASUREMENT = "Failed";
+public class InstantMessagingTest extends MeasurementScreen {
 
     @ClassRule
     public static final LocaleTestRule localeTestRule = new LocaleTestRule();

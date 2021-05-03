@@ -1,6 +1,7 @@
 package org.openobservatory.ooniprobe;
 
 import org.openobservatory.ooniprobe.model.database.Network;
+import org.openobservatory.ooniprobe.model.database.Result;
 
 import io.bloco.faker.Faker;
 
@@ -19,5 +20,12 @@ public class NetworkFactory {
         temp.country_code =  faker.address.countryCode();
 
         return temp;
+    }
+
+    public static Network createAndSave(Result result) {
+        Network tempNetwork = build();
+        result.network = tempNetwork;
+        tempNetwork.save();
+        return  tempNetwork;
     }
 }

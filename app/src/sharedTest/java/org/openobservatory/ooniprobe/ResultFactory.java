@@ -1,12 +1,11 @@
 package org.openobservatory.ooniprobe;
 
-import org.openobservatory.ooniprobe.model.database.Measurement;
 import org.openobservatory.ooniprobe.model.database.Network;
 import org.openobservatory.ooniprobe.model.database.Result;
-import org.openobservatory.ooniprobe.model.database.Url;
 import org.openobservatory.ooniprobe.test.suite.AbstractSuite;
 import org.openobservatory.ooniprobe.test.suite.CircumventionSuite;
 import org.openobservatory.ooniprobe.test.suite.InstantMessagingSuite;
+import org.openobservatory.ooniprobe.test.suite.WebsitesSuite;
 import org.openobservatory.ooniprobe.test.test.AbstractTest;
 import org.openobservatory.ooniprobe.test.test.FacebookMessenger;
 import org.openobservatory.ooniprobe.test.test.Psiphon;
@@ -14,9 +13,11 @@ import org.openobservatory.ooniprobe.test.test.RiseupVPN;
 import org.openobservatory.ooniprobe.test.test.Signal;
 import org.openobservatory.ooniprobe.test.test.Telegram;
 import org.openobservatory.ooniprobe.test.test.Tor;
+import org.openobservatory.ooniprobe.test.test.WebConnectivity;
 import org.openobservatory.ooniprobe.test.test.Whatsapp;
 import org.openobservatory.ooniprobe.utils.models.TestSuiteMeasurements;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -71,24 +72,28 @@ public class ResultFactory {
             int blockedMeasurements
     ) throws IllegalArgumentException {
 
-        List<AbstractTest> measurementTestTypes = null;
-        if (suite instanceof InstantMessagingSuite || suite instanceof CircumventionSuite) {
+        List<AbstractTest> measurementTestTypes = new ArrayList<>();
 
-            if (suite instanceof InstantMessagingSuite) {
-                measurementTestTypes = Arrays.asList(
-                        new FacebookMessenger(),
-                        new Telegram(),
-                        new Whatsapp(),
-                        new Signal()
-                );
-            }
+        if (suite instanceof InstantMessagingSuite) {
+            measurementTestTypes = Arrays.asList(
+                    new FacebookMessenger(),
+                    new Telegram(),
+                    new Whatsapp(),
+                    new Signal()
+            );
+        }
 
-            if (suite instanceof CircumventionSuite) {
-                measurementTestTypes = Arrays.asList(
-                        new Psiphon(),
-                        new Tor(),
-                        new RiseupVPN()
-                );
+        if (suite instanceof CircumventionSuite) {
+            measurementTestTypes = Arrays.asList(
+                    new Psiphon(),
+                    new Tor(),
+                    new RiseupVPN()
+            );
+        }
+
+        if (suite instanceof WebsitesSuite) {
+            for (int i = 0; i < accessibleMeasurements + blockedMeasurements; i++) {
+                measurementTestTypes.add(new WebConnectivity());
             }
         }
 
@@ -112,22 +117,23 @@ public class ResultFactory {
     ) {
         Result tempResult = ResultFactory.build(suite);
 
-        Url tempUrl = UrlFactory.build();
-        tempUrl.save();
-
-        Network tempNetwork = NetworkFactory.build();
+        Network tempNetwork = NetworkFactory.createAndSave(tempResult);
         tempResult.network = tempNetwork;
         tempNetwork.save();
 
-        successTestTypes.forEach(type -> {
-            Measurement temp = MeasurementFactory.build(type, tempResult, tempUrl, false);
-            temp.save();
-        });
+        successTestTypes.forEach(type -> MeasurementFactory.build(
+                type,
+                tempResult,
+                UrlFactory.createAndSave(),
+                false
+        ).save());
 
-        failedTestTypes.forEach(type -> {
-            Measurement temp = MeasurementFactory.build(type, tempResult, tempUrl, true);
-            temp.save();
-        });
+        failedTestTypes.forEach(type -> MeasurementFactory.build(
+                type,
+                tempResult,
+                UrlFactory.createAndSave(),
+                true
+        ).save());
 
         tempResult.getMeasurements();
         tempResult.save();

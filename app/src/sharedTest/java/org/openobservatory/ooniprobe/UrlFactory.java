@@ -19,4 +19,9 @@ public class UrlFactory {
         return temp;
     }
 
+    public static Url createAndSave() {
+        Url tempUrl = build();
+        tempUrl.save();
+        return tempUrl;
+    }
 }

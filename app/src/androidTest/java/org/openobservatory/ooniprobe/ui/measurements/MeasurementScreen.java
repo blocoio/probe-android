@@ -9,6 +9,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openobservatory.ooniprobe.AbstractTest;
@@ -78,6 +79,7 @@ public class MeasurementScreen extends AbstractTest {
     }
 
     @Test
+    @Ignore("No need for now")
     public void testOpenResultDetails(){
         launchResults();
     }

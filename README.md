@@ -73,7 +73,7 @@ Run unit tests
 Run instrumented tests (requires clean state in the device) 
 
 ```
-./gradlew connectedAndroidTest
+./gradlew connectedStableFullDebugAndroidTest
 ```
 
 Generate code coverage report (after all unit and instrumented tests successfully passed)

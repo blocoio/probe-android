@@ -17,7 +17,6 @@ import org.junit.runner.RunWith;
 import org.openobservatory.ooniprobe.AbstractTest;
 import org.openobservatory.ooniprobe.R;
 import org.openobservatory.ooniprobe.activity.MainActivity;
-import org.openobservatory.ooniprobe.activity.ResultDetailActivity;
 import org.openobservatory.ooniprobe.activity.RunningActivity;
 
 import io.bloco.faker.Faker;
@@ -50,7 +49,7 @@ public class WebsitesTest extends AbstractTest {
     public final ServiceTestRule serviceRule = new ServiceTestRule();
 
 
-    public ActivityScenario<ResultDetailActivity> scenario;
+    public ActivityScenario<MainActivity> scenario;
 
     @Test
     public void addCustomWebsiteTest() {

@@ -5,13 +5,9 @@ import android.os.Bundle;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.openobservatory.ooniprobe.AbstractTest;
 import org.openobservatory.ooniprobe.R;
 import org.openobservatory.ooniprobe.activity.MainActivity;
@@ -33,8 +29,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.containsString;
 
-@RunWith(AndroidJUnit4.class)
-public class MeasurementScreen extends AbstractTest {
+public class MeasurementAbstractTest extends AbstractTest {
 
     protected final String SUCCESSFUL_MEASUREMENT
             = getResourceString(R.string.Modal_OK);
@@ -60,6 +55,8 @@ public class MeasurementScreen extends AbstractTest {
 
     @Before
     public void setUp() {
+        a.getPreferenceManager().setShowOnboarding(false);
+        a.getPreferenceManager().setAppOpenCount(0L);
         DatabaseUtils.resetDatabase();
     }
 
@@ -78,11 +75,6 @@ public class MeasurementScreen extends AbstractTest {
         onView(withId( R.id.testResults)).perform(click());
     }
 
-    @Test
-    @Ignore("No need for now")
-    public void testOpenResultDetails(){
-        launchResults();
-    }
 
     void assertMeasurementHeader(Result result) {
         // Page 1

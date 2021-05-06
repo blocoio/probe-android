@@ -137,7 +137,7 @@ public class WebsitesTest extends AbstractTest {
                 .perform(click());
 
         onView(withId(R.id.customUrl)).perform(click());
-        
+
         Intents.init();
 
         Intent emptyIntent = new Intent();

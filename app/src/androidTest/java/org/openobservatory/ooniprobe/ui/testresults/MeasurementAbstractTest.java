@@ -1,4 +1,4 @@
-package org.openobservatory.ooniprobe.ui.measurements;
+package org.openobservatory.ooniprobe.ui.testresults;
 
 import android.content.Intent;
 import android.os.Bundle;

@@ -111,6 +111,7 @@ public class ResultFactory {
             );
         }
 
+
         TestSuiteMeasurements measurements = populateMeasurements(
                 measurementTestTypes,
                 accessibleMeasurements,

@@ -18,6 +18,8 @@ import org.openobservatory.ooniprobe.model.database.Result;
 import org.openobservatory.ooniprobe.utils.DatabaseUtils;
 import org.openobservatory.ooniprobe.utils.FormattingUtils;
 
+import java.util.concurrent.TimeUnit;
+
 import tools.fastlane.screengrab.locale.LocaleTestRule;
 
 import static androidx.test.espresso.Espresso.onView;
@@ -25,9 +27,11 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.containsString;
+import static org.openobservatory.ooniprobe.ui.utils.ViewMatchers.waitId;
 
 public class MeasurementAbstractTest extends AbstractTest {
 
@@ -67,6 +71,8 @@ public class MeasurementAbstractTest extends AbstractTest {
         intent.putExtras(bundle);
 
         scenario = ActivityScenario.launch(intent);
+        // To avoid flaky testing
+        onView(isRoot()).perform(waitId(R.id.pager, TimeUnit.MILLISECONDS.toMillis(200)));
     }
 
     public void launchResults() {

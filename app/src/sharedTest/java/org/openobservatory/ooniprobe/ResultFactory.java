@@ -5,9 +5,14 @@ import org.openobservatory.ooniprobe.model.database.Result;
 import org.openobservatory.ooniprobe.test.suite.AbstractSuite;
 import org.openobservatory.ooniprobe.test.suite.CircumventionSuite;
 import org.openobservatory.ooniprobe.test.suite.InstantMessagingSuite;
+import org.openobservatory.ooniprobe.test.suite.PerformanceSuite;
 import org.openobservatory.ooniprobe.test.suite.WebsitesSuite;
 import org.openobservatory.ooniprobe.test.test.AbstractTest;
+import org.openobservatory.ooniprobe.test.test.Dash;
 import org.openobservatory.ooniprobe.test.test.FacebookMessenger;
+import org.openobservatory.ooniprobe.test.test.HttpHeaderFieldManipulation;
+import org.openobservatory.ooniprobe.test.test.HttpInvalidRequestLine;
+import org.openobservatory.ooniprobe.test.test.Ndt;
 import org.openobservatory.ooniprobe.test.test.Psiphon;
 import org.openobservatory.ooniprobe.test.test.RiseupVPN;
 import org.openobservatory.ooniprobe.test.test.Signal;
@@ -95,6 +100,15 @@ public class ResultFactory {
             for (int i = 0; i < accessibleMeasurements + blockedMeasurements; i++) {
                 measurementTestTypes.add(new WebConnectivity());
             }
+        }
+
+        if (suite instanceof PerformanceSuite) {
+            measurementTestTypes = Arrays.asList(
+                    new Ndt(),
+                    new Dash(),
+                    new HttpInvalidRequestLine(),
+                    new HttpHeaderFieldManipulation()
+            );
         }
 
         TestSuiteMeasurements measurements = populateMeasurements(

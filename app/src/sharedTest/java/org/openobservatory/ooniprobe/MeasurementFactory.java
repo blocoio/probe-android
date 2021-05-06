@@ -56,7 +56,7 @@ public class MeasurementFactory {
             case "telegram":
                 return "{\"telegram_http_blocking\":\"false\",\"telegram_tcp_blocking\":\"false\",\"telegram_web_status\":\"ok\"}";
 
-                case "facebook_messenger":
+            case "facebook_messenger":
                 return "{\"facebook_tcp_blocking\":\"false\",\"facebook_dns_blocking\":\"ok\"}";
 
             case "signal":
@@ -71,6 +71,20 @@ public class MeasurementFactory {
 
             case "riseupvpn":
                 return "{\"ca_cert_status\":true,\"transport_status\":{\"obfs4\":\"ok\",\"openvpn\":\"ok\"}}";
+
+            // Performance
+            case "ndt":
+                return "{\"protocol\":7,\"server\":{\"hostname\":\"ndt-mlab2-lis02.mlab-oti.measurement-lab.org\",\"site\":\"lis02\"},\"server_country\":\"PT\",\"server_name\":\"lis02\",\"summary\":{\"avg_rtt\":14.444,\"download\":23186.37200985908,\"max_rtt\":92.873,\"min_rtt\":12.606,\"mss\":1448.0,\"ping\":12.606,\"retransmit_rate\":0.06652086351792866,\"upload\":18466.777738433746}}";
+
+            case "dash":
+                return "{\"server\":{\"hostname\":\"neubot-mlab-mlab2-lis02.mlab-oti.measurement-lab.org\",\"site\":\"lis02\"},\"simple\":{\"median_bitrate\":27244.0,\"min_playout_delay\":0.08821899999999872}}";
+
+            case "http_invalid_request_line":
+                return "{\"received\":[\"GET cache_object://localhost/ HTTP/1.0\\n\\r\",\"LIHS / HTTP/1.1\\n\\r\",\"GET / HTTP/AGW\\r\\n\",\"ISYIFXVXWFCXCNHMWXONZWOHJYNOVUJXGQMEOGUDUKKVRLRXOEJXZPVPENRELTTWFCMNTBKXXFKSDKIYLXIZZSBUFUHIQBAPFYRFVRAGMUIETRUMPLGRBTGUINIVFDTPVNRHBDALGZWQKCMEPJCOHKTIGVOLDJBBQKCLBKGUDYZKFSZOJLTJDEINCGRXTZHHTZNZHBTOLPREOLOZDTDPHRYISMIXAPTEKSIXIIHDICFMAEVRCDZXAGXHGCKAOWKHVQKKSDVXTYUJJGDECXOXMLXVLCRRPBJEMICYPTUTXJLTGZXSWZZHEFBLXAUIVQQLYMUWQKPZVMOCVBNXMIYNBFHUJKEJGEKXKHTRTLRZWMGTMLFRBXZPBYJUJFZKNOSHPQHHTNDVFWBJKRXFHMRAXHEORCKXGTTTLCZGCKTOVOHAGXLNHEXGAGEYOKMRKYHPZQGRYHKOTGSQJZMULWMEWVZGRFEQBVDIVLEEBOYOWTMLGZUALZXXXGTAXQPSFVJHYPKOUDYIKSTANPDFDFVJULCRTFAHGKSGWWJSRWFFYLNRNKLQHIAVGJNQPURZMDBYMYJJATUAMXBBBTQHCZWLPZVRBLZRUBAYQMQDKYCDBOIIWNSIXBXVPKUCZJBEPWIOIPDPYYCEFWDQWHMIOAPGYQEHKYDNDDNFJVBNBHHCTDUOHRUHSVBYYEGZIEZACIMTOBLSZDMTTWQILGKXAHJJNGDUDCBYVFOJJFGNKYJFHNYRVPCVUACOOVYELLGSWJAMKQMBJDBYYZDUNEKSUTBNSFRAPEROAWXZESGDNQZPGNJRTUKWAALTJRGZRGLOJGRYJQHLDQOWSXHSDKWEENXKRXCCCXYQXODNAOLQRLWRQXVLAXHFWEJDRJVQHSHZJIUERZANPKESMLFHDNOFNJZKVCKBEBGAIMSMXKYGSOSAUYAZOTBCNKJCSLDRPZMCUTPGPOMXKSDDLRXMLJCQQNRPTJYWBUJEZFPBOHOCZQEITFLMPTMYWBFDVQNCJSKFMRIN / HTTP/1.1\\r\\n\",\"VGZVC VSLCA SQXFB JKIFN\\r\\n\"],\"sent\":[\"GET cache_object://localhost/ HTTP/1.0\\n\\r\",\"LIHS / HTTP/1.1\\n\\r\",\"GET / HTTP/AGW\\r\\n\",\"ISYIFXVXWFCXCNHMWXONZWOHJYNOVUJXGQMEOGUDUKKVRLRXOEJXZPVPENRELTTWFCMNTBKXXFKSDKIYLXIZZSBUFUHIQBAPFYRFVRAGMUIETRUMPLGRBTGUINIVFDTPVNRHBDALGZWQKCMEPJCOHKTIGVOLDJBBQKCLBKGUDYZKFSZOJLTJDEINCGRXTZHHTZNZHBTOLPREOLOZDTDPHRYISMIXAPTEKSIXIIHDICFMAEVRCDZXAGXHGCKAOWKHVQKKSDVXTYUJJGDECXOXMLXVLCRRPBJEMICYPTUTXJLTGZXSWZZHEFBLXAUIVQQLYMUWQKPZVMOCVBNXMIYNBFHUJKEJGEKXKHTRTLRZWMGTMLFRBXZPBYJUJFZKNOSHPQHHTNDVFWBJKRXFHMRAXHEORCKXGTTTLCZGCKTOVOHAGXLNHEXGAGEYOKMRKYHPZQGRYHKOTGSQJZMULWMEWVZGRFEQBVDIVLEEBOYOWTMLGZUALZXXXGTAXQPSFVJHYPKOUDYIKSTANPDFDFVJULCRTFAHGKSGWWJSRWFFYLNRNKLQHIAVGJNQPURZMDBYMYJJATUAMXBBBTQHCZWLPZVRBLZRUBAYQMQDKYCDBOIIWNSIXBXVPKUCZJBEPWIOIPDPYYCEFWDQWHMIOAPGYQEHKYDNDDNFJVBNBHHCTDUOHRUHSVBYYEGZIEZACIMTOBLSZDMTTWQILGKXAHJJNGDUDCBYVFOJJFGNKYJFHNYRVPCVUACOOVYELLGSWJAMKQMBJDBYYZDUNEKSUTBNSFRAPEROAWXZESGDNQZPGNJRTUKWAALTJRGZRGLOJGRYJQHLDQOWSXHSDKWEENXKRXCCCXYQXODNAOLQRLWRQXVLAXHFWEJDRJVQHSHZJIUERZANPKESMLFHDNOFNJZKVCKBEBGAIMSMXKYGSOSAUYAZOTBCNKJCSLDRPZMCUTPGPOMXKSDDLRXMLJCQQNRPTJYWBUJEZFPBOHOCZQEITFLMPTMYWBFDVQNCJSKFMRIN / HTTP/1.1\\r\\n\",\"VGZVC VSLCA SQXFB JKIFN\\r\\n\"],\"tampering\":{\"value\":false}}";
+
+            case "http_header_field_manipulation":
+                return "{\"tampering\":{\"header_field_name\":\"x-content-type-options\"}}";
+
             default: result = "{}";
         }
 
@@ -96,6 +110,19 @@ public class MeasurementFactory {
             // Circumvention
             case "riseupvpn":
                 return "{\"ca_cert_status\":false,\"failing_gateways\":[{\"ip\":\"10.0.0.0\",\"port\":\"8000\",\"transport_type\":\"openvpn\"}, {\"ip\":\"10.0.0.0\",\"port\":\"8000\",\"transport_type\":\"obfs4\"}]}";
+
+            // Performance
+            case "ndt":
+                return "";
+
+            case "dash":
+                return "";
+
+            case "http_invalid_request_line":
+                return "";
+
+            case "http_header_field_manipulation":
+                return "";
 
             case "tor":
             default: result = "{}";

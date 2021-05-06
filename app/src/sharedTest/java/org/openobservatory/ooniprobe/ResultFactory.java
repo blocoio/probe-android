@@ -104,10 +104,10 @@ public class ResultFactory {
 
         if (suite instanceof PerformanceSuite) {
             measurementTestTypes = Arrays.asList(
-              new Ndt(),
-              new Dash(),
-              new HttpInvalidRequestLine(),
-              new HttpHeaderFieldManipulation()
+                    new Ndt(),
+                    new Dash(),
+                    new HttpInvalidRequestLine(),
+                    new HttpHeaderFieldManipulation()
             );
         }
 

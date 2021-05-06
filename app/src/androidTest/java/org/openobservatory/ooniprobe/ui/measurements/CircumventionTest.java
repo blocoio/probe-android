@@ -1,6 +1,9 @@
 package org.openobservatory.ooniprobe.ui.measurements;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openobservatory.ooniprobe.R;
 import org.openobservatory.ooniprobe.ResultFactory;
 import org.openobservatory.ooniprobe.model.database.Measurement;
@@ -15,7 +18,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 
-public class CircumventionTest extends MeasurementScreen {
+@RunWith(AndroidJUnit4.class)
+public class CircumventionTest extends MeasurementAbstractTest {
 
     @Test
     public void testHeaderData() {

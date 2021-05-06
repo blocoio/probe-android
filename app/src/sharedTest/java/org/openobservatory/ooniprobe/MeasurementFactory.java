@@ -56,7 +56,7 @@ public class MeasurementFactory {
             case "telegram":
                 return "{\"telegram_http_blocking\":\"false\",\"telegram_tcp_blocking\":\"false\",\"telegram_web_status\":\"ok\"}";
 
-                case "facebook_messenger":
+            case "facebook_messenger":
                 return "{\"facebook_tcp_blocking\":\"false\",\"facebook_dns_blocking\":\"ok\"}";
 
             case "signal":

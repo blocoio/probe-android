@@ -1,7 +1,10 @@
 package org.openobservatory.ooniprobe.ui.measurements;
 
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openobservatory.ooniprobe.R;
 import org.openobservatory.ooniprobe.ResultFactory;
 import org.openobservatory.ooniprobe.model.database.Measurement;
@@ -24,7 +27,8 @@ import static org.hamcrest.Matchers.containsString;
 import static org.openobservatory.ooniprobe.ui.utils.RecyclerViewMatcher.withRecyclerView;
 import static org.openobservatory.ooniprobe.ui.utils.ViewMatchers.waitPartialText;
 
-public class WebsitesTest extends MeasurementScreen {
+@RunWith(AndroidJUnit4.class)
+public class WebsitesTest extends MeasurementAbstractTest {
 
     @Test
     public void testHeaderData() {

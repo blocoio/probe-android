@@ -1,4 +1,4 @@
-package org.openobservatory.ooniprobe.ui.measurements;
+package org.openobservatory.ooniprobe.ui.testresults;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 

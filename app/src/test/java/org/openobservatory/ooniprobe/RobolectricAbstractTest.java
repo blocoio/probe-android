@@ -10,7 +10,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.openobservatory.ooniprobe.common.Application;
-import org.openobservatory.ooniprobe.di.TestApplication;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 

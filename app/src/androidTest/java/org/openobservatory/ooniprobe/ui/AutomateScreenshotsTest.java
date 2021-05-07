@@ -9,6 +9,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openobservatory.ooniprobe.AbstractTest;
@@ -47,6 +48,7 @@ public class AutomateScreenshotsTest extends AbstractTest {
     }
 
     @Test
+    @Ignore("ignore")
     public void testTakeScreenshot() {
         //Dashboard
         Screengrab.screenshot("01_dashboard");

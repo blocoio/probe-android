@@ -125,7 +125,6 @@ public class WebsitesTest extends AbstractTest {
     public void lunchCustomWebsiteIntentTest() {
         // Arrange
         Faker faker = new Faker();
-        String url1 = faker.internet.domainName() + faker.internet.domainSuffix();
 
         // Act
         launchDashboard();

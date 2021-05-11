@@ -58,7 +58,7 @@ public class ResultFactory {
      * @return result with
      */
     public static Result createAndSave(AbstractSuite suite) {
-        return createAndSave(suite, DEFAULT_SUCCESS_MEASUREMENTS, DEFAULT_FAILED_MEASUREMENTS);
+        return createAndSave(suite, DEFAULT_SUCCESS_MEASUREMENTS, DEFAULT_FAILED_MEASUREMENTS, true);
     }
 
     /**
@@ -75,6 +75,27 @@ public class ResultFactory {
             AbstractSuite suite,
             int accessibleMeasurements,
             int blockedMeasurements
+    ) throws IllegalArgumentException {
+        return createAndSave(suite, accessibleMeasurements, blockedMeasurements, true);
+    }
+
+
+    /**
+     * Saves a result in the DB and returns it with the given number of measurements, and
+     * all related model objects in the DB.
+     *
+     * @param suite                  type of result (ex: Websites, Instant Messaging, Circumvention, Performance)
+     * @param accessibleMeasurements number of accessible measurements
+     * @param blockedMeasurements    number of blocked measurements
+     * @param measurementsUploaded   if the measurements are uploaded
+     * @return result with
+     * @throws IllegalArgumentException for excess number of measurements
+     */
+    public static Result createAndSave(
+            AbstractSuite suite,
+            int accessibleMeasurements,
+            int blockedMeasurements,
+            boolean measurementsUploaded
     ) throws IllegalArgumentException {
 
         List<AbstractTest> measurementTestTypes = new ArrayList<>();
@@ -120,14 +141,16 @@ public class ResultFactory {
         return createAndSave(
                 suite,
                 measurements.getAccessibleTestTypes(),
-                measurements.getBlockedTestTypes()
+                measurements.getBlockedTestTypes(),
+                measurementsUploaded
         );
     }
 
     private static Result createAndSave(
             AbstractSuite suite,
             List<AbstractTest> successTestTypes,
-            List<AbstractTest> failedTestTypes
+            List<AbstractTest> failedTestTypes,
+            boolean resultsUploaded
     ) {
         Result tempResult = ResultFactory.build(suite);
 
@@ -139,14 +162,16 @@ public class ResultFactory {
                 type,
                 tempResult,
                 UrlFactory.createAndSave(),
-                false
+                false,
+                resultsUploaded
         ).save());
 
         failedTestTypes.forEach(type -> MeasurementFactory.build(
                 type,
                 tempResult,
                 UrlFactory.createAndSave(),
-                true
+                true,
+                resultsUploaded
         ).save());
 
         tempResult.getMeasurements();

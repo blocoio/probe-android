@@ -15,7 +15,8 @@ public class MeasurementFactory {
             AbstractTest testType,
             Result result,
             Url url,
-            boolean wasBlocked
+            boolean wasBlocked,
+            boolean wasUploaded
     ) {
 
         Measurement temp = new Measurement();
@@ -23,14 +24,14 @@ public class MeasurementFactory {
         temp.id = faker.number.positive();
         temp.result = result;
         temp.is_done = true;
-        temp.is_uploaded = true;
+        temp.is_uploaded = wasUploaded;
         temp.is_failed = false;
         temp.is_upload_failed = false;
         temp.is_rerun = false;
         temp.is_anomaly = wasBlocked;
         temp.start_time = faker.date.forward();
         temp.test_name = testType.getName();
-        temp.report_id = String.valueOf(result.id);
+        temp.report_id = wasUploaded ? String.valueOf(result.id) : null;
         temp.test_keys = getTestKeyFrom(testType, wasBlocked);
         temp.runtime = faker.number.positive();
         temp.url = url;

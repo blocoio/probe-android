@@ -20,4 +20,9 @@ public class AbstractTest {
 		Context targetContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 		return targetContext.getResources().getString(id);
 	}
+
+	protected void onlyRunForAutomationFlag() {
+		// This assumption will be false, causing the test to halt and be ignored.
+		org.junit.Assume.assumeTrue(BuildConfig.RUN_AUTOMATION);
+	}
 }

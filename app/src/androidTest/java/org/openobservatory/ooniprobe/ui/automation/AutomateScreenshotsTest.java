@@ -1,4 +1,4 @@
-package org.openobservatory.ooniprobe.ui;
+package org.openobservatory.ooniprobe.ui.automation;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.Espresso;
@@ -50,6 +50,8 @@ public class AutomateScreenshotsTest extends AbstractTest {
     @Test
     @Ignore("ignore")
     public void testTakeScreenshot() {
+        onlyRunForAutomationFlag();
+
         //Dashboard
         Screengrab.screenshot("01_dashboard");
 

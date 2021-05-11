@@ -64,13 +64,17 @@ Instead to build the app to stay compliant to F-Droid use `fdroidRelease`, conta
 
 ## Testing
 
+Some testes like those found under the Automation package require a clean state in the device.
+As such those tests will only run if the Build Config `RUN_AUTOMATION` is true. By default this
+flag is false to allow CI testing.
+
 Run unit tests 
 
 ```
 ./gradlew testStableFullDebug
 ```
 
-Run instrumented tests (requires clean state in the device) 
+Run instrumented tests
 
 ```
 ./gradlew connectedStableFullDebugAndroidTest

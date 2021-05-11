@@ -32,6 +32,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.containsString;
 import static org.openobservatory.ooniprobe.ui.utils.RecyclerViewMatcher.withRecyclerView;
+import static org.openobservatory.ooniprobe.ui.utils.ViewMatchers.waitId;
 import static org.openobservatory.ooniprobe.ui.utils.ViewMatchers.waitPartialText;
 
 @RunWith(AndroidJUnit4.class)
@@ -188,6 +189,7 @@ public class TestResultsMainScreenTest extends MeasurementAbstractTest {
         onView(withText(getResourceString(R.string.Modal_Delete))).perform(click());
 
         // Assert
+        onView(isRoot()).perform(waitId(R.id.tests, TimeUnit.SECONDS.toMillis(3)));
         onView(withId(R.id.tests)).check(matches(withText("4")));
         onView(withId(R.id.networks)).check(matches(withText("1")));
     }

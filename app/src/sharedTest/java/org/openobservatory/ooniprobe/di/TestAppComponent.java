@@ -1,5 +1,6 @@
 package org.openobservatory.ooniprobe.di;
 
+import org.openobservatory.ooniprobe.TestApplication;
 import org.openobservatory.ooniprobe.di.Components.ActivityComponent;
 
 import javax.inject.Singleton;

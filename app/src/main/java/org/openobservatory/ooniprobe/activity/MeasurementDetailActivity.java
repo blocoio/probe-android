@@ -18,10 +18,8 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import org.openobservatory.ooniprobe.R;
-import org.openobservatory.ooniprobe.client.OONIAPIClient;
 import org.openobservatory.ooniprobe.common.ResubmitTask;
 import org.openobservatory.ooniprobe.domain.MeasurementsManager;
 import org.openobservatory.ooniprobe.domain.callback.DomainCallback;
@@ -42,7 +40,6 @@ import org.openobservatory.ooniprobe.fragment.measurement.WebConnectivityFragmen
 import org.openobservatory.ooniprobe.fragment.measurement.WhatsappFragment;
 import org.openobservatory.ooniprobe.fragment.resultHeader.ResultHeaderDetailFragment;
 import org.openobservatory.ooniprobe.model.database.Measurement;
-import org.openobservatory.ooniprobe.model.database.Measurement_Table;
 import org.openobservatory.ooniprobe.test.suite.PerformanceSuite;
 import org.openobservatory.ooniprobe.test.test.Dash;
 import org.openobservatory.ooniprobe.test.test.FacebookMessenger;
@@ -297,7 +294,8 @@ public class MeasurementDetailActivity extends AbstractActivity implements Confi
             startActivity(TextActivity.newIntent(this, TextActivity.TYPE_UPLOAD_LOG, (String) extra));
     }
 
-    private static class ResubmitAsyncTask extends ResubmitTask<MeasurementDetailActivity> {
+    public static class ResubmitAsyncTask extends ResubmitTask<MeasurementDetailActivity> {
+
         ResubmitAsyncTask(MeasurementDetailActivity activity) {
             super(activity);
         }
@@ -307,8 +305,7 @@ public class MeasurementDetailActivity extends AbstractActivity implements Confi
             super.onPostExecute(result);
             MeasurementDetailActivity activity = getActivity();
             if (activity != null) {
-                activity.measurement = SQLite.select().from(Measurement.class)
-                        .where(Measurement_Table.id.eq(activity.measurement.id)).querySingle();
+                activity.measurement = d.measurementsManager.get(activity.measurement.id);
                 activity.load();
                 if (!result)
                     new ConfirmDialogFragment.Builder()

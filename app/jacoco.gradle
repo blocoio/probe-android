@@ -30,6 +30,8 @@ task jacocoAndroidTestReport(type: JacocoReport) {
         '**/*_Factory.*',
          // DBFlow
         '**/*_Table*.*',
+        '**/*AppDatabaseAppDatabase_Database*.*',
+        '**/*GeneratedDatabaseHolder*.*',
         // Butter Knife
         '**/*_ViewBinding*',
       ]

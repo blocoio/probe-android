@@ -51,10 +51,6 @@ public class PreferenceManager {
         sp.edit().putString(TOKEN, token).apply();
     }
 
-    public void setGeoVer(int geoVer) {
-        sp.edit().putInt(GEO_VER, geoVer).apply();
-    }
-
     public Integer getMaxRuntime() {
         if (!isMaxRuntimeEnabled())
             return MAX_RUNTIME_DISABLED;

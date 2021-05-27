@@ -1,9 +1,10 @@
 package org.openobservatory.ooniprobe.common;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.format.DateFormat;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.openobservatory.engine.OONISession;
 import org.openobservatory.ooniprobe.R;
@@ -19,6 +20,7 @@ import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.openobservatory.ooniprobe.common.PreferenceManager.AUTORUN_COUNT;
@@ -27,51 +29,54 @@ import static org.openobservatory.ooniprobe.common.PreferenceManager.DELETE_JSON
 import static org.openobservatory.ooniprobe.common.PreferenceManager.DELETE_JSON_KEY;
 import static org.openobservatory.ooniprobe.common.PreferenceManager.NOTIFICATION_DIALOG_DISABLE;
 import static org.openobservatory.ooniprobe.common.PreferenceManager.SHOW_ONBOARDING;
-import static org.openobservatory.ooniprobe.common.PreferenceManager.TOKEN;
 import static org.openobservatory.ooniprobe.common.PreferenceManager.UUID4;
 
 public class PreferenceManagerTest extends RobolectricAbstractTest {
 
+    private PreferenceManager pm;
+    private SharedPreferences sharedPreferences;
+
+    @Override
+    @Before
+    public void setUp() {
+        super.setUp();
+        pm = new PreferenceManager(c);
+        sharedPreferences = getDefaultSharedPreferences(c);
+    }
+
+    @Override
+    @After
+    public void tearDown() {
+        super.tearDown();
+        sharedPreferences.edit().clear().commit();
+    }
+
     @Test
     public void testGetSetToken() {
-        // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
         // Act
+        String initialValue = pm.getToken();
         pm.setToken("abc");
         String value = pm.getToken();
 
         // Assert
-        assertEquals(sharedPreferences.getString(TOKEN, ""), value);
+        assertNull(initialValue);
+        assertEquals("abc", value);
     }
 
     @Test
     public void testMaxRuntime() {
-        // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
-        sharedPreferences.edit()
-                .putBoolean(c.getString(R.string.max_runtime_enabled), true)
-                .putString(c.getString(R.string.max_runtime), "91")
-                .apply();
-
         // Act
         int value = pm.getMaxRuntime();
         boolean isEnabled = pm.isMaxRuntimeEnabled();
 
         // Assert
+        assertEquals(90, value);
         assertTrue(isEnabled);
-        assertEquals(91, value);
     }
 
     @Test
     public void testMaxRuntimeDisabled() {
         // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
         sharedPreferences.edit()
                 .putBoolean(c.getString(R.string.max_runtime_enabled), false)
                 .putString(c.getString(R.string.max_runtime), "91")
@@ -83,39 +88,11 @@ public class PreferenceManagerTest extends RobolectricAbstractTest {
 
         // Assert
         assertFalse(isEnabled);
-        assertEquals(-1, value);
-    }
-
-    @Test
-    public void testMaxRuntimeFallback() {
-        // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
-        sharedPreferences.edit()
-                .putBoolean(c.getString(R.string.max_runtime_enabled), true)
-                .putString(c.getString(R.string.max_runtime), "abc")
-                .apply();
-
-        // Act
-        int value = pm.getMaxRuntime();
-        boolean isEnabled = pm.isMaxRuntimeEnabled();
-
-        // Assert
-        assertTrue(isEnabled);
-        assertEquals(90, value);
+        assertEquals(PreferenceManager.MAX_RUNTIME_DISABLED.intValue(), value);
     }
 
     @Test
     public void testSendCrashGetSet() {
-        // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
-        sharedPreferences.edit()
-                .putBoolean(c.getString(R.string.send_crash), false)
-                .apply();
-
         // Act
         boolean original = pm.isSendCrash();
         pm.setSendCrash(true);
@@ -128,34 +105,18 @@ public class PreferenceManagerTest extends RobolectricAbstractTest {
 
     @Test
     public void testShowOnBoardingGetSet() {
-        // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
-        sharedPreferences.edit()
-                .putBoolean(SHOW_ONBOARDING, false)
-                .apply();
-
         // Act
         boolean original = pm.isShowOnboarding();
-        pm.setShowOnboarding(true);
+        pm.setShowOnboarding(false);
         boolean updated = pm.isShowOnboarding();
 
         // Assert
-        assertFalse(original);
-        assertTrue(updated);
+        assertTrue(original);
+        assertFalse(updated);
     }
 
     @Test
     public void testAskNotificationDialog() {
-        // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
-        sharedPreferences.edit()
-                .putBoolean(NOTIFICATION_DIALOG_DISABLE, false)
-                .apply();
-
         // Act
         boolean original = pm.isAskNotificationDialogDisabled();
         pm.disableAskNotificationDialog();
@@ -168,31 +129,20 @@ public class PreferenceManagerTest extends RobolectricAbstractTest {
 
     @Test
     public void testIsDarkTheme() {
-        // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
+        // Act
+        boolean original = pm.isDarkTheme();
         sharedPreferences.edit()
                 .putBoolean(c.getString(R.string.theme_enabled), true)
                 .apply();
-
-        // Act
         boolean value = pm.isDarkTheme();
 
         // Assert
+        assertFalse(original);
         assertTrue(value);
     }
 
     @Test
     public void testNotificationsFromDialog() {
-        // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
-        sharedPreferences.edit()
-                .putBoolean(NOTIFICATION_DIALOG_DISABLE, false)
-                .apply();
-
         // Act
         boolean original = pm.isAskNotificationDialogDisabled();
         pm.disableAskNotificationDialog();
@@ -206,9 +156,6 @@ public class PreferenceManagerTest extends RobolectricAbstractTest {
     @Test
     public void testIsUploadResults() {
         // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
         sharedPreferences.edit()
                 .putBoolean(c.getString(R.string.upload_results), false)
                 .apply();
@@ -223,9 +170,6 @@ public class PreferenceManagerTest extends RobolectricAbstractTest {
     @Test
     public void testIsDebugLogs() {
         // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
         sharedPreferences.edit()
                 .putBoolean(c.getString(R.string.debugLogs), false)
                 .apply();
@@ -240,9 +184,6 @@ public class PreferenceManagerTest extends RobolectricAbstractTest {
     @Test
     public void testAbstractTests() {
         // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
         sharedPreferences.edit()
                 .putBoolean(c.getString(R.string.test_telegram), false)
                 .putBoolean(c.getString(R.string.test_whatsapp), false)
@@ -274,19 +215,16 @@ public class PreferenceManagerTest extends RobolectricAbstractTest {
     @Test
     public void testEnabledCategoryArr() {
         // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
         ArrayList<String> list = new ArrayList<>();
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         for (String key : c.getResources().getStringArray(R.array.CategoryCodes)) {
-            sharedPreferences.edit().putBoolean(key, true).apply();
+            editor.putBoolean(key, true);
             list.add(key);
         }
 
-        sharedPreferences.edit()
-                .putBoolean(list.get(0), false)
-                .putBoolean(list.get(1), false)
-                .apply();
+        editor.putBoolean(list.get(0), false);
+        editor.putBoolean(list.get(1), false);
+        editor.commit();
 
         list.remove(0);
         list.remove(0);
@@ -302,21 +240,14 @@ public class PreferenceManagerTest extends RobolectricAbstractTest {
 
     @Test
     public void testCanCallDeleteJson() {
-        // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
+        // Act
         sharedPreferences.edit()
-                .putLong(DELETE_JSON_KEY, 0L)
-                .apply();
-
+                .remove(DELETE_JSON_KEY)
+                .commit(); // This value gets set on Application create
         boolean defaultValue = pm.canCallDeleteJson();
-
         sharedPreferences.edit()
                 .putLong(DELETE_JSON_KEY, DELETE_JSON_DELAY + 1L)
                 .apply();
-
-        // Act
         boolean original = pm.canCallDeleteJson();
         pm.setLastCalled();
         boolean updated = pm.canCallDeleteJson();
@@ -330,9 +261,6 @@ public class PreferenceManagerTest extends RobolectricAbstractTest {
     @Test
     public void testGetOrGenerateUUID4() {
         // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
         OONISession mockSession = mock(OONISession.class);
         EngineProvider.engineInterface = new TestEngineInterface(mockSession);
 
@@ -352,32 +280,20 @@ public class PreferenceManagerTest extends RobolectricAbstractTest {
 
     @Test
     public void testAppOpenCount() {
-        // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
-        sharedPreferences.edit()
-                .putBoolean("XXXX", false)
-                .apply();
-
         // Act
-        pm.setAppOpenCount(8L);
         long original = pm.getAppOpenCount();
         pm.incrementAppOpenCount();
         pm.incrementAppOpenCount();
         long updated = pm.getAppOpenCount();
 
         // Assert
-        assertEquals(original, 8L);
-        assertEquals(updated, 10L);
+        assertEquals(original, 0L);
+        assertEquals(updated, 2L);
     }
 
     @Test
     public void testAutomaticTest() {
         // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
         sharedPreferences.edit()
                 .putBoolean(c.getString(R.string.automated_testing_enabled), true)
                 .apply();
@@ -394,61 +310,47 @@ public class PreferenceManagerTest extends RobolectricAbstractTest {
 
     @Test
     public void testTestWifiOnly() {
-        // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
+        // Act
+        boolean original = pm.testWifiOnly();
         sharedPreferences.edit()
                 .putBoolean(c.getString(R.string.automated_testing_wifionly), false)
                 .apply();
-
-        // Act
         boolean value = pm.testWifiOnly();
 
         // Assert
+        assertTrue(original);
         assertFalse(value);
     }
 
     @Test
     public void testTestChargingOnly() {
-        // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
+        // Act
+        boolean original = pm.testChargingOnly();
         sharedPreferences.edit()
                 .putBoolean(c.getString(R.string.automated_testing_charging), false)
                 .apply();
-
-        // Act
         boolean value = pm.testChargingOnly();
 
         // Assert
+        assertTrue(original);
         assertFalse(value);
     }
 
     @Test
     public void testAutorun() {
-        // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
-
-        sharedPreferences.edit()
-                .putLong(AUTORUN_COUNT, 5L)
-                .apply();
-
         // Act
+        long original = pm.getAutorun();
         pm.incrementAutorun();
         long value = pm.getAutorun();
 
         // Assert
-        assertEquals(6L, value);
+        assertEquals(0L, original);
+        assertEquals(1L, value);
     }
 
     @Test
     public void testAutorunDate() {
         // Arrange
-        PreferenceManager pm = build(c);
-        SharedPreferences sharedPreferences = getDefaultSharedPreferences(c);
         String updatedDate = DateFormat.format(DateFormat.getBestDateTimePattern(Locale.getDefault(), "yMdHm"), System.currentTimeMillis()).toString();
 
         sharedPreferences.edit()
@@ -463,9 +365,5 @@ public class PreferenceManagerTest extends RobolectricAbstractTest {
         // Assert
         assertEquals(c.getString(R.string.Dashboard_Overview_LastRun_Never), original);
         assertEquals(updatedDate, updated);
-    }
-
-    private PreferenceManager build(Context c) {
-        return new PreferenceManager(c);
     }
 }

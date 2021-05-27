@@ -48,6 +48,9 @@ public class AbstractTestTest extends RobolectricAbstractTest {
 
     Faker faker = new Faker();
 
+    static final String REPORT_ID = "1000_00001";
+    static final int MEASUREMENT_ID = 1;
+
     PreferenceManager mockPreferenceManager = mock(PreferenceManager.class);
     TestCallback mockedCallback = mock(TestCallback.class);
     OONISession mockedSession = mock(OONISession.class);
@@ -99,19 +102,18 @@ public class AbstractTestTest extends RobolectricAbstractTest {
 
         String measurementName = test.getName();
         String measurementUrl = ulr.url;
-        String reportId = "1000_00001";
+        String reportId = REPORT_ID;
         String jsonResultString = gson.toJson(jsonResult);
-        int measurementId = 1;
         double measurementDownload = 10;
         double measurementUpload = 15;
 
         // Act
         testEngine.sendNextEvent(EventResultFactory.buildStarted());
         testEngine.sendNextEvent(EventResultFactory.buildCreateReport(reportId));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementStart(measurementId, measurementUrl));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementEntry(measurementId, jsonResultString));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementUpload(measurementId, false));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementDone(measurementId));
+        testEngine.sendNextEvent(EventResultFactory.buildMeasurementStart(MEASUREMENT_ID, measurementUrl));
+        testEngine.sendNextEvent(EventResultFactory.buildMeasurementEntry(MEASUREMENT_ID, jsonResultString));
+        testEngine.sendNextEvent(EventResultFactory.buildMeasurementUpload(MEASUREMENT_ID, false));
+        testEngine.sendNextEvent(EventResultFactory.buildMeasurementDone(MEASUREMENT_ID));
         testEngine.sendNextEvent(EventResultFactory.buildDataUsage(measurementDownload, measurementUpload));
         testEngine.sendNextEvent(EventResultFactory.buildEnded());
 
@@ -230,6 +232,7 @@ public class AbstractTestTest extends RobolectricAbstractTest {
 
         // Act
         testEngine.sendNextEvent(EventResultFactory.buildStarted());
+        testEngine.sendNextEvent(EventResultFactory.resolverFailure(message));
         testEngine.sendNextEvent(EventResultFactory.buildEnded());
 
         test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
@@ -275,7 +278,7 @@ public class AbstractTestTest extends RobolectricAbstractTest {
 
         // Act
         test.run(c, mockPreferenceManager, gson, result, 1, mockedCallback);
-        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq(REPORT_ID)).querySingle();
 
         // Assert
         assertNotNull(updatedMeasurement);
@@ -294,7 +297,7 @@ public class AbstractTestTest extends RobolectricAbstractTest {
 
         // Act
         test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
-        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq(REPORT_ID)).querySingle();
 
         // Assert
         assertNotNull(updatedMeasurement);
@@ -309,7 +312,7 @@ public class AbstractTestTest extends RobolectricAbstractTest {
 
         // Act
         test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
-        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq(REPORT_ID)).querySingle();
 
         // Assert
         assertNotNull(updatedMeasurement);
@@ -324,7 +327,7 @@ public class AbstractTestTest extends RobolectricAbstractTest {
 
         // Act
         test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
-        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq(REPORT_ID)).querySingle();
 
         // Assert
         assertNotNull(updatedMeasurement);
@@ -339,7 +342,7 @@ public class AbstractTestTest extends RobolectricAbstractTest {
 
         // Act
         test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
-        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq(REPORT_ID)).querySingle();
 
         // Assert
         assertNotNull(updatedMeasurement);
@@ -354,7 +357,7 @@ public class AbstractTestTest extends RobolectricAbstractTest {
 
         // Act
         test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
-        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq(REPORT_ID)).querySingle();
 
         // Assert
         assertNotNull(updatedMeasurement);
@@ -369,7 +372,7 @@ public class AbstractTestTest extends RobolectricAbstractTest {
 
         // Act
         test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
-        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq(REPORT_ID)).querySingle();
 
         // Assert
         assertNotNull(updatedMeasurement);
@@ -384,7 +387,7 @@ public class AbstractTestTest extends RobolectricAbstractTest {
 
         // Act
         test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
-        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq(REPORT_ID)).querySingle();
 
         // Assert
         assertNotNull(updatedMeasurement);
@@ -399,7 +402,7 @@ public class AbstractTestTest extends RobolectricAbstractTest {
 
         // Act
         test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
-        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq(REPORT_ID)).querySingle();
 
         // Assert
         assertNotNull(updatedMeasurement);
@@ -541,9 +544,9 @@ public class AbstractTestTest extends RobolectricAbstractTest {
 
         // Act
         testEngine.sendNextEvent(EventResultFactory.buildStarted());
-        testEngine.sendNextEvent(EventResultFactory.buildCreateReport("1000_00001"));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementStart(1, UrlFactory.createAndSave().url));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementEntry(1, jsonResultString));
+        testEngine.sendNextEvent(EventResultFactory.buildCreateReport(REPORT_ID));
+        testEngine.sendNextEvent(EventResultFactory.buildMeasurementStart(MEASUREMENT_ID, UrlFactory.createAndSave().url));
+        testEngine.sendNextEvent(EventResultFactory.buildMeasurementEntry(MEASUREMENT_ID, jsonResultString));
 
         return result;
     }

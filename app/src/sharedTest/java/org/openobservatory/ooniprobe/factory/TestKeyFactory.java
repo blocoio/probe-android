@@ -122,6 +122,7 @@ public class TestKeyFactory {
             case HttpInvalidRequestLine.NAME:
                 return "{\"tampering\":{\"value\":\"true\"}}";
 
+            case Psiphon.NAME:
             case Dash.NAME:
                 return "{\"failure\":\"ok\"}";
 

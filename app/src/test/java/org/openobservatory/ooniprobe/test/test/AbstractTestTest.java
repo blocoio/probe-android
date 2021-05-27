@@ -502,19 +502,31 @@ public class AbstractTestTest extends RobolectricAbstractTest {
     @Test
     public void testSignal() {
         // Arrange
-        AbstractTest test = new WebConnectivity();
-        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
-        result.save();
+        AbstractTest test = new Signal();
+        Result result = setupTestRun(test, true);
 
         // Act
-        testEngine.sendNextEvent(EventResultFactory.buildStarted());
-
-        testEngine.sendNextEvent(EventResultFactory.buildEnded());
-
         test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq(REPORT_ID)).querySingle();
 
         // Assert
-        fail();
+        assertNotNull(updatedMeasurement);
+        assertFalse(updatedMeasurement.is_anomaly);
+    }
+
+    @Test
+    public void testSignalFail() {
+        // Arrange
+        AbstractTest test = new Signal();
+        Result result = setupTestRun(test, false);
+
+        // Act
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq(REPORT_ID)).querySingle();
+
+        // Assert
+        assertNotNull(updatedMeasurement);
+        assertTrue(updatedMeasurement.is_anomaly);
     }
 
     @Test
@@ -537,24 +549,6 @@ public class AbstractTestTest extends RobolectricAbstractTest {
 
     @Test
     public void testPsiphon() {
-        // Arrange
-        AbstractTest test = new WebConnectivity();
-        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
-        result.save();
-
-        // Act
-        testEngine.sendNextEvent(EventResultFactory.buildStarted());
-
-        testEngine.sendNextEvent(EventResultFactory.buildEnded());
-
-        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
-
-        // Assert
-        fail();
-    }
-
-    @Test
-    public void testExperimental() {
         // Arrange
         AbstractTest test = new WebConnectivity();
         Result result = ResultFactory.build(new WebsitesSuite(), true, false);

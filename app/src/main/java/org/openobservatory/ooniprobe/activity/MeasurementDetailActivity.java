@@ -226,11 +226,6 @@ public class MeasurementDetailActivity extends AbstractActivity implements Confi
         new ResubmitAsyncTask(this).execute(null, measurement.id);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
     private void load() {
         if (measurementsManager.canUpload(measurement))
             snackbar.show();

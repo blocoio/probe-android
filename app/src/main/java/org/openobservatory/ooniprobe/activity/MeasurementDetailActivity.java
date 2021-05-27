@@ -21,7 +21,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import org.openobservatory.ooniprobe.R;
-import org.openobservatory.ooniprobe.client.OONIAPIClient;
 import org.openobservatory.ooniprobe.common.ResubmitTask;
 import org.openobservatory.ooniprobe.domain.MeasurementsManager;
 import org.openobservatory.ooniprobe.domain.callback.DomainCallback;
@@ -227,11 +226,6 @@ public class MeasurementDetailActivity extends AbstractActivity implements Confi
 
     private void runAsyncTask() {
         new ResubmitAsyncTask(this).execute(null, measurement.id);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     private void load() {

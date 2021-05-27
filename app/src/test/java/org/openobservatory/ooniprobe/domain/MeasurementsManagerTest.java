@@ -1,6 +1,12 @@
 package org.openobservatory.ooniprobe.domain;
 
+import com.raizlabs.android.dbflow.sql.language.SQLite;
+
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
+import org.openobservatory.engine.OONIContext;
+import org.openobservatory.engine.OONISession;
+import org.openobservatory.engine.OONISubmitResults;
 import org.openobservatory.ooniprobe.RobolectricAbstractTest;
 import org.openobservatory.ooniprobe.client.OONIAPIClient;
 import org.openobservatory.ooniprobe.client.callback.CheckReportIdCallback;
@@ -12,12 +18,15 @@ import org.openobservatory.ooniprobe.factory.ResponseFactory;
 import org.openobservatory.ooniprobe.factory.ResultFactory;
 import org.openobservatory.ooniprobe.model.api.ApiMeasurement;
 import org.openobservatory.ooniprobe.model.database.Measurement;
+import org.openobservatory.ooniprobe.model.database.Measurement_Table;
 import org.openobservatory.ooniprobe.model.database.Result;
 import org.openobservatory.ooniprobe.test.suite.PerformanceSuite;
 import org.openobservatory.ooniprobe.test.suite.WebsitesSuite;
 import org.openobservatory.ooniprobe.utils.DatabaseUtils;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import io.bloco.faker.Faker;
@@ -30,7 +39,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -386,6 +397,71 @@ public class MeasurementsManagerTest extends RobolectricAbstractTest {
 
         // Assert
         verify(callback, times(1)).onError(any());
+    }
+
+    @Test
+    public void standardTimeoutTest() {
+        // Assert
+        assertEquals(build().getTimeout(2000), 11);
+    }
+
+    @Test
+    public void zeroTimeoutTest() {
+        // Assert
+        assertEquals(build().getTimeout(0), 10);
+    }
+
+    @Test
+    public void maxTimeoutTest() {
+        // Assert
+        assertEquals(build().getTimeout(Long.MAX_VALUE), Long.MAX_VALUE / 2000 + 10);
+    }
+
+    @Test
+    public void reSubmitTest() {
+        try {
+
+            // Arrange
+            String newReportId = "abc";
+            String fileContent = "{}";
+            MeasurementsManager manager = build();
+            Measurement measurement = ResultFactory.createAndSaveWithEntryFiles(
+                    c,
+                    new WebsitesSuite(),
+                    5,
+                    0,
+                    false
+            ).getMeasurements().get(0);
+
+            OONIContext ooniContext = mock(OONIContext.class);
+            OONISession ooniSession = mock(OONISession.class);
+            OONISubmitResults submitResults = mock(OONISubmitResults.class);
+
+            when(ooniSession.submit(any(), any())).thenReturn(submitResults);
+            when(ooniSession.newContextWithTimeout(anyLong())).thenReturn(ooniContext);
+
+            when(submitResults.getUpdatedMeasurement()).thenReturn(fileContent);
+            when(submitResults.getUpdatedReportID()).thenReturn(newReportId);
+
+            // Act
+            boolean value = manager.reSubmit(measurement, ooniSession);
+            Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq(newReportId)).querySingle();
+            File updatedFile = Measurement.getEntryFile(c, updatedMeasurement.id, updatedMeasurement.test_name);
+            String updatedFileContent = FileUtils.readFileToString(updatedFile, StandardCharsets.UTF_8);
+
+            // Assert
+            assertTrue(value);
+            assertNotNull(updatedMeasurement);
+            assertNotNull(updatedFile);
+            assertEquals(measurement.test_name, updatedMeasurement.test_name);
+            assertEquals(measurement.url.url, updatedMeasurement.url.url);
+            assertEquals(fileContent, updatedFileContent);
+            assertTrue(updatedMeasurement.is_uploaded);
+            assertFalse(updatedMeasurement.is_upload_failed);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail();
+        }
     }
 
     public MeasurementsManager build() {

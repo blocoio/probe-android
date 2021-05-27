@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 
 import org.openobservatory.ooniprobe.BuildConfig;
 import org.openobservatory.ooniprobe.client.OONIAPIClient;
+import org.openobservatory.ooniprobe.common.Application;
 import org.openobservatory.ooniprobe.common.DateAdapter;
 import org.openobservatory.ooniprobe.common.TamperingJsonDeserializer;
 import org.openobservatory.ooniprobe.di.annotations.ApiUrl;
@@ -30,9 +31,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 @Module
 public class ApplicationModule {
 
-    android.app.Application application;
+    Application application;
 
-    public ApplicationModule(android.app.Application application) {
+    public ApplicationModule(Application application) {
         this.application = application;
     }
 
@@ -42,12 +43,22 @@ public class ApplicationModule {
     }
 
     @Provides
+    Application provideApplication() {
+        return application;
+    }
+
+    @Provides
     @Singleton
-    Gson provideGson() {
+    GsonBuilder provideGsonBuilder() {
         return new GsonBuilder()
                 .registerTypeAdapter(Date.class, new DateAdapter())
-                .registerTypeAdapter(TestKeys.Tampering.class, new TamperingJsonDeserializer())
-                .create();
+                .registerTypeAdapter(TestKeys.Tampering.class, new TamperingJsonDeserializer());
+    }
+
+    @Provides
+    @Singleton
+    Gson provideGson(GsonBuilder gsonBuilder) {
+        return gsonBuilder.create();
     }
 
     @Provides

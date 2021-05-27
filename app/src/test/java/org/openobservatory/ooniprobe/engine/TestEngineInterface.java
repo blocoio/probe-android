@@ -30,6 +30,11 @@ public class TestEngineInterface extends EngineInterface {
     }
 
     @Override
+    public String newUUID4() {
+        return "UUID4";
+    }
+
+    @Override
     public OONIMKTask startExperimentTask(OONIMKTaskConfig settings) throws Exception {
         return experimentTask;
     }

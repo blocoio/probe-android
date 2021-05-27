@@ -118,10 +118,13 @@ public class TestKeyFactory {
                 return "{\"dir_port_accessible\":0,\"dir_port_total\":14,\"obfs4_accessible\":14,\"obfs4_total\":15,\"or_port_accessible\":0,\"or_port_dirauth_accessible\":10,\"or_port_dirauth_total\":10,\"or_port_total\":0}";
 
             // Performance
+
+            case HttpHeaderFieldManipulation.NAME:
+                return "{\"tampering\":{\"value\":\"true\"}}";
+
             case Ndt.NAME:
             case Dash.NAME:
             case HttpInvalidRequestLine.NAME:
-            case HttpHeaderFieldManipulation.NAME:
             default:
                 result = "{}";
         }

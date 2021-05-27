@@ -271,18 +271,9 @@ public class AbstractTestTest extends RobolectricAbstractTest {
     public void testNdt() {
         // Arrange
         Ndt test = new Ndt();
-        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
-        result.save();
-
-        JsonResult jsonResult = JsonResultFactory.build(test, true);
-        String jsonResultString = gson.toJson(jsonResult);
+        Result result = setupTestRun(test, true);
 
         // Act
-        testEngine.sendNextEvent(EventResultFactory.buildStarted());
-        testEngine.sendNextEvent(EventResultFactory.buildCreateReport("1000_00001"));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementStart(1, UrlFactory.createAndSave().url));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementEntry(1, jsonResultString));
-
         test.run(c, mockPreferenceManager, gson, result, 1, mockedCallback);
         Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
 
@@ -299,18 +290,9 @@ public class AbstractTestTest extends RobolectricAbstractTest {
     public void testTor() {
         // Arrange
         Tor test = new Tor();
-        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
-        result.save();
-
-        JsonResult jsonResult = JsonResultFactory.build(test, true);
-        String jsonResultString = gson.toJson(jsonResult);
+        Result result = setupTestRun(test, true);
 
         // Act
-        testEngine.sendNextEvent(EventResultFactory.buildStarted());
-        testEngine.sendNextEvent(EventResultFactory.buildCreateReport("1000_00001"));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementStart(1, UrlFactory.createAndSave().url));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementEntry(1, jsonResultString));
-
         test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
         Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
 
@@ -323,18 +305,9 @@ public class AbstractTestTest extends RobolectricAbstractTest {
     public void testTorFail() {
         // Arrange
         Tor test = new Tor();
-        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
-        result.save();
-
-        JsonResult jsonResult = JsonResultFactory.build(test, false);
-        String jsonResultString = gson.toJson(jsonResult);
+        Result result = setupTestRun(test, false);
 
         // Act
-        testEngine.sendNextEvent(EventResultFactory.buildStarted());
-        testEngine.sendNextEvent(EventResultFactory.buildCreateReport("1000_00001"));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementStart(1, UrlFactory.createAndSave().url));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementEntry(1, jsonResultString));
-
         test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
         Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
 
@@ -347,18 +320,9 @@ public class AbstractTestTest extends RobolectricAbstractTest {
     public void testRiseupVpn() {
         // Arrange
         AbstractTest test = new RiseupVPN();
-        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
-        result.save();
-
-        JsonResult jsonResult = JsonResultFactory.build(test, true);
-        String jsonResultString = gson.toJson(jsonResult);
+        Result result = setupTestRun(test, true);
 
         // Act
-        testEngine.sendNextEvent(EventResultFactory.buildStarted());
-        testEngine.sendNextEvent(EventResultFactory.buildCreateReport("1000_00001"));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementStart(1, UrlFactory.createAndSave().url));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementEntry(1, jsonResultString));
-
         test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
         Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
 
@@ -371,18 +335,9 @@ public class AbstractTestTest extends RobolectricAbstractTest {
     public void testRiseupVpnFail() {
         // Arrange
         AbstractTest test = new RiseupVPN();
-        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
-        result.save();
-
-        JsonResult jsonResult = JsonResultFactory.build(test, false);
-        String jsonResultString = gson.toJson(jsonResult);
+        Result result = setupTestRun(test, false);
 
         // Act
-        testEngine.sendNextEvent(EventResultFactory.buildStarted());
-        testEngine.sendNextEvent(EventResultFactory.buildCreateReport("1000_00001"));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementStart(1, UrlFactory.createAndSave().url));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementEntry(1, jsonResultString));
-
         test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
         Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
 
@@ -395,18 +350,9 @@ public class AbstractTestTest extends RobolectricAbstractTest {
     public void testWhatsapp() {
         // Arrange
         AbstractTest test = new Whatsapp();
-        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
-        result.save();
-
-        JsonResult jsonResult = JsonResultFactory.build(test, true);
-        String jsonResultString = gson.toJson(jsonResult);
+        Result result = setupTestRun(test, true);
 
         // Act
-        testEngine.sendNextEvent(EventResultFactory.buildStarted());
-        testEngine.sendNextEvent(EventResultFactory.buildCreateReport("1000_00001"));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementStart(1, UrlFactory.createAndSave().url));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementEntry(1, jsonResultString));
-
         test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
         Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
 
@@ -419,18 +365,9 @@ public class AbstractTestTest extends RobolectricAbstractTest {
     public void testWhatsappFail() {
         // Arrange
         AbstractTest test = new Whatsapp();
-        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
-        result.save();
-
-        JsonResult jsonResult = JsonResultFactory.build(test, false);
-        String jsonResultString = gson.toJson(jsonResult);
+        Result result = setupTestRun(test, false);
 
         // Act
-        testEngine.sendNextEvent(EventResultFactory.buildStarted());
-        testEngine.sendNextEvent(EventResultFactory.buildCreateReport("1000_00001"));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementStart(1, UrlFactory.createAndSave().url));
-        testEngine.sendNextEvent(EventResultFactory.buildMeasurementEntry(1, jsonResultString));
-
         test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
         Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
 
@@ -442,19 +379,31 @@ public class AbstractTestTest extends RobolectricAbstractTest {
     @Test
     public void testTelegram() {
         // Arrange
-        AbstractTest test = new WebConnectivity();
-        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
-        result.save();
+        AbstractTest test = new Telegram();
+        Result result = setupTestRun(test, true);
 
         // Act
-        testEngine.sendNextEvent(EventResultFactory.buildStarted());
-
-        testEngine.sendNextEvent(EventResultFactory.buildEnded());
-
         test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
 
         // Assert
-        fail();
+        assertNotNull(updatedMeasurement);
+        assertFalse(updatedMeasurement.is_anomaly);
+    }
+
+    @Test
+    public void testTelegramFail() {
+        // Arrange
+        AbstractTest test = new Telegram();
+        Result result = setupTestRun(test, false);
+
+        // Act
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
+
+        // Assert
+        assertNotNull(updatedMeasurement);
+        assertTrue(updatedMeasurement.is_anomaly);
     }
 
     @Test
@@ -581,5 +530,21 @@ public class AbstractTestTest extends RobolectricAbstractTest {
 
         // Assert
         fail();
+    }
+
+    private Result setupTestRun(AbstractTest test, boolean success) {
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+
+        JsonResult jsonResult = JsonResultFactory.build(test, success);
+        String jsonResultString = gson.toJson(jsonResult);
+
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+        testEngine.sendNextEvent(EventResultFactory.buildCreateReport("1000_00001"));
+        testEngine.sendNextEvent(EventResultFactory.buildMeasurementStart(1, UrlFactory.createAndSave().url));
+        testEngine.sendNextEvent(EventResultFactory.buildMeasurementEntry(1, jsonResultString));
+
+        return result;
     }
 }

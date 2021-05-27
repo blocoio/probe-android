@@ -4,6 +4,8 @@ import org.openobservatory.ooniprobe.model.jsonresult.EventResult;
 
 public class EventResultFactory {
 
+    public static String ERROR_THROW_KEY = "THROW ERROR";
+
     public static EventResult build(String key) {
         EventResult.Value value = new EventResult.Value();
         return build(key, value);
@@ -57,8 +59,14 @@ public class EventResultFactory {
         return build("status.measurement_done", value);
     }
 
-    public static EventResult buildEnded() {
-        return build("task_terminated");
+    public static EventResult buildIpLookup(String networkName, String ip, String asn, String countryCode) {
+        EventResult.Value value = new EventResult.Value();
+        value.probe_network_name =networkName;
+        value.probe_ip = ip;
+        value.probe_asn = asn;
+        value.probe_cc = countryCode;
+
+        return build("status.geoip_lookup", value);
     }
 
     public static EventResult buildDataUsage(double download, double upload) {
@@ -66,6 +74,32 @@ public class EventResultFactory {
         value.downloaded_kb = download;
         value.uploaded_kb = upload;
 
-        return build("status.end",value);
+        return build("status.end", value);
     }
+
+    public static EventResult buildLog(String message) {
+        EventResult.Value value = new EventResult.Value();
+        value.message = message;
+
+        return build("log", value);
+    }
+    public static EventResult buildProgress(Double percentage, String message) {
+        EventResult.Value value = new EventResult.Value();
+        value.percentage = percentage;
+        value.message = message;
+
+        return build("status.progress", value);
+    }
+
+    public static EventResult resolverFailure(String message) {
+        EventResult.Value value = new EventResult.Value();
+        value.failure = message;
+
+        return build("failure.resolver_lookup", value);
+    }
+
+    public static EventResult buildEnded() {
+        return build("task_terminated");
+    }
+
 }

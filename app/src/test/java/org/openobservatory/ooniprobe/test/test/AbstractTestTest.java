@@ -3,26 +3,32 @@ package org.openobservatory.ooniprobe.test.test;
 import com.google.gson.Gson;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.openobservatory.engine.OONISession;
 import org.openobservatory.ooniprobe.R;
 import org.openobservatory.ooniprobe.RobolectricAbstractTest;
 import org.openobservatory.ooniprobe.common.PreferenceManager;
+import org.openobservatory.ooniprobe.common.ReachabilityManager;
 import org.openobservatory.ooniprobe.engine.TestEngineInterface;
 import org.openobservatory.ooniprobe.factory.EventResultFactory;
 import org.openobservatory.ooniprobe.factory.JsonResultFactory;
 import org.openobservatory.ooniprobe.factory.ResultFactory;
 import org.openobservatory.ooniprobe.factory.UrlFactory;
 import org.openobservatory.ooniprobe.model.database.Measurement;
+import org.openobservatory.ooniprobe.model.database.Measurement_Table;
 import org.openobservatory.ooniprobe.model.database.Result;
 import org.openobservatory.ooniprobe.model.database.Result_Table;
 import org.openobservatory.ooniprobe.model.database.Url;
 import org.openobservatory.ooniprobe.model.jsonresult.JsonResult;
+import org.openobservatory.ooniprobe.model.jsonresult.TestKeys;
 import org.openobservatory.ooniprobe.model.settings.Settings;
 import org.openobservatory.ooniprobe.test.EngineProvider;
 import org.openobservatory.ooniprobe.test.suite.WebsitesSuite;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import io.bloco.faker.Faker;
 
@@ -81,7 +87,7 @@ public class AbstractTestTest extends RobolectricAbstractTest {
     }
 
     @Test
-    public void testMeasurementStart() {
+    public void testCreateNewMeasurement() {
         // Arrange
         AbstractTest test = new WebConnectivity();
         Result result = ResultFactory.build(new WebsitesSuite(), true, false);
@@ -133,5 +139,357 @@ public class AbstractTestTest extends RobolectricAbstractTest {
         assertEquals(measurement.report_id, reportId);
         assertTrue(measurement.is_uploaded);
         assertFalse(measurement.is_anomaly);
+    }
+
+    @Test
+    public void testNetworkEvent() {
+        // Arrange
+        AbstractTest test = new WebConnectivity();
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+
+        String networkName = faker.internet.domainName();
+        String ip = faker.internet.ipV4Address();
+        String asn = "asn";
+        String countryCode = faker.address.countryCode();
+
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+        testEngine.sendNextEvent(EventResultFactory.buildIpLookup(networkName, ip, asn, countryCode));
+        testEngine.sendNextEvent(EventResultFactory.buildEnded());
+
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+        Result updatedResult = SQLite.select().from(Result.class).where(Result_Table.id.eq(result.id)).querySingle();
+
+        // Assert
+        assertNotNull(updatedResult);
+        assertEquals(networkName, updatedResult.network.network_name);
+        assertEquals(ip, updatedResult.network.ip);
+        assertEquals(asn, updatedResult.network.asn);
+        assertEquals(countryCode, updatedResult.network.country_code);
+        assertEquals(ReachabilityManager.MOBILE, updatedResult.network.network_type);
+    }
+
+    @Test
+    public void testLogEvent() throws IOException {
+        // Arrange
+        AbstractTest test = new WebConnectivity();
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+
+        String message = "Ipsum";
+
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+        testEngine.sendNextEvent(EventResultFactory.buildLog(message));
+        testEngine.sendNextEvent(EventResultFactory.buildEnded());
+
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+
+        File logFile = Measurement.getLogFile(c, result.id, test.getName());
+        String content = FileUtils.readFileToString(logFile, StandardCharsets.UTF_8).replace("\n", "");
+
+        // Assert
+        verify(mockedCallback, times(1)).onLog(message);
+        assertEquals(message, content);
+    }
+
+    @Test
+    public void testProgressEvent() throws IOException {
+        // Arrange
+        AbstractTest test = new WebConnectivity();
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+
+        String message = "Ipsum";
+
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+        testEngine.sendNextEvent(EventResultFactory.buildProgress(0D, message));
+        testEngine.sendNextEvent(EventResultFactory.buildEnded());
+
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+
+        File logFile = Measurement.getLogFile(c, result.id, test.getName());
+        String content = FileUtils.readFileToString(logFile, StandardCharsets.UTF_8).replace("\n", "");
+
+        // Assert
+        verify(mockedCallback, times(1)).onLog(message);
+        verify(mockedCallback, times(2)).onProgress(100);
+        assertEquals(message, content);
+    }
+
+    @Test
+    public void testResolverFailureEvent() {
+        // Arrange
+        AbstractTest test = new WebConnectivity();
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+
+        String message = "Ipsum";
+
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+        testEngine.sendNextEvent(EventResultFactory.buildEnded());
+
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+        Result updatedResult = SQLite.select().from(Result.class).where(Result_Table.id.eq(result.id)).querySingle();
+
+        // Assert
+        assertNotNull(updatedResult);
+        assertEquals(message, updatedResult.failure_msg);
+    }
+
+    @Test
+    public void testTaskInterrupt() {
+        // Arrange
+        AbstractTest test = new WebConnectivity();
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+
+        TestEngineInterface.TestOONIMKTask task = mock(TestEngineInterface.TestOONIMKTask.class);
+        testEngine.experimentTask = task;
+
+        when(task.canInterrupt()).thenReturn(true);
+        when(task.isDone()).thenReturn(true);
+
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+        testEngine.sendNextEvent(EventResultFactory.buildEnded());
+
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+
+        boolean value = test.canInterrupt();
+        test.interrupt();
+
+        // Assert
+        assertTrue(value);
+        verify(task, times(1)).interrupt();
+    }
+
+    @Test
+    public void testNdt() {
+        // Arrange
+        Ndt test = new Ndt();
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+
+        JsonResult jsonResult = JsonResultFactory.build(test, true);
+        String jsonResultString = gson.toJson(jsonResult);
+
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+        testEngine.sendNextEvent(EventResultFactory.buildCreateReport("1000_00001"));
+        testEngine.sendNextEvent(EventResultFactory.buildMeasurementStart(1, UrlFactory.createAndSave().url));
+        testEngine.sendNextEvent(EventResultFactory.buildMeasurementEntry(1, jsonResultString));
+
+        test.run(c, mockPreferenceManager, gson, result, 1, mockedCallback);
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
+
+        // Assert
+        assertNotNull(updatedMeasurement);
+
+        TestKeys testKeys = updatedMeasurement.getTestKeys();
+
+        assertEquals(testKeys.server_name, "lis02");
+        assertEquals(testKeys.server_country, "PT");
+    }
+
+    @Test
+    public void testTor() {
+        // Arrange
+        AbstractTest test = new WebConnectivity();
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+
+        testEngine.sendNextEvent(EventResultFactory.buildEnded());
+
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+
+        // Assert
+        fail();
+    }
+
+    @Test
+    public void testRiseupVpn() {
+        // Arrange
+        AbstractTest test = new WebConnectivity();
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+
+        testEngine.sendNextEvent(EventResultFactory.buildEnded());
+
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+
+        // Assert
+        fail();
+    }
+
+    @Test
+    public void testWhatsapp() {
+        // Arrange
+        AbstractTest test = new WebConnectivity();
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+
+        testEngine.sendNextEvent(EventResultFactory.buildEnded());
+
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+
+        // Assert
+        fail();
+    }
+
+    @Test
+    public void testTelegram() {
+        // Arrange
+        AbstractTest test = new WebConnectivity();
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+
+        testEngine.sendNextEvent(EventResultFactory.buildEnded());
+
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+
+        // Assert
+        fail();
+    }
+
+    @Test
+    public void testFacebookMessenger() {
+        // Arrange
+        AbstractTest test = new WebConnectivity();
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+
+        testEngine.sendNextEvent(EventResultFactory.buildEnded());
+
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+
+        // Assert
+        fail();
+    }
+
+    @Test
+    public void testHttpHeaderFieldManipulation() {
+        // Arrange
+        AbstractTest test = new WebConnectivity();
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+
+        testEngine.sendNextEvent(EventResultFactory.buildEnded());
+
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+
+        // Assert
+        fail();
+    }
+
+    @Test
+    public void testHttpInvalidRequestLine() {
+        // Arrange
+        AbstractTest test = new WebConnectivity();
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+
+        testEngine.sendNextEvent(EventResultFactory.buildEnded());
+
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+
+        // Assert
+        fail();
+    }
+
+    @Test
+    public void testSignal() {
+        // Arrange
+        AbstractTest test = new WebConnectivity();
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+
+        testEngine.sendNextEvent(EventResultFactory.buildEnded());
+
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+
+        // Assert
+        fail();
+    }
+
+    @Test
+    public void testDash() {
+        // Arrange
+        AbstractTest test = new WebConnectivity();
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+
+        testEngine.sendNextEvent(EventResultFactory.buildEnded());
+
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+
+        // Assert
+        fail();
+    }
+
+    @Test
+    public void testPsiphon() {
+        // Arrange
+        AbstractTest test = new WebConnectivity();
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+
+        testEngine.sendNextEvent(EventResultFactory.buildEnded());
+
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+
+        // Assert
+        fail();
+    }
+
+    @Test
+    public void testExperimental() {
+        // Arrange
+        AbstractTest test = new WebConnectivity();
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+
+        testEngine.sendNextEvent(EventResultFactory.buildEnded());
+
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+
+        // Assert
+        fail();
     }
 }

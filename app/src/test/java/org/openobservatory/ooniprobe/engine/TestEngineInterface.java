@@ -20,7 +20,7 @@ import static org.openobservatory.ooniprobe.TestApplicationProvider.app;
 
 public class TestEngineInterface extends EngineInterface {
 
-    public final TestOONIMKTask experimentTask = new TestOONIMKTask();
+    public TestOONIMKTask experimentTask = new TestOONIMKTask();
     private final OONISession session;
 
     public boolean isTaskDone = false;

@@ -32,6 +32,7 @@ public class ResubmitTask<A extends AbstractActivity> extends NetworkProgressAsy
     protected Dependencies d = new Dependencies();
 
     @VisibleForTesting
+    // In testing, publishProgress can not be mocked by robolectric
     protected boolean publishProgress = true;
 
     /**

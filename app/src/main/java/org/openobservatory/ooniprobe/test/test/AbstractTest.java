@@ -63,8 +63,8 @@ public abstract class AbstractTest implements Serializable {
         //Checking for resources before running any test
         settings.name = name;
         settings.inputs = inputs;
-        settings.options.max_runtime = max_runtime;
-        settings.annotations.origin = origin;
+        settings.setMaxRuntime(max_runtime);
+        settings.setOrigin(origin);
         measurements = new SparseArray<>();
         try {
             task = EngineProvider.get().startExperimentTask(settings.toExperimentSettings(gson, c));

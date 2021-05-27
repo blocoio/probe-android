@@ -3,6 +3,8 @@ package org.openobservatory.ooniprobe.common;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import androidx.annotation.VisibleForTesting;
+
 import com.raizlabs.android.dbflow.sql.language.Where;
 
 import org.openobservatory.engine.LoggerArray;
@@ -28,6 +30,9 @@ public class ResubmitTask<A extends AbstractActivity> extends NetworkProgressAsy
     protected LoggerArray logger;
 
     protected Dependencies d = new Dependencies();
+
+    @VisibleForTesting
+    protected boolean publishProgress = true;
 
     /**
      * Use this class to resubmit a measurement, use result_id and measurement_id to filter list of value
@@ -86,7 +91,9 @@ public class ResubmitTask<A extends AbstractActivity> extends NetworkProgressAsy
                 if (activity ==  null)
                     break;
                 String paramOfParam = activity.getString(R.string.paramOfParam, Integer.toString(i + 1), Integer.toString(measurements.size()));
-                publishProgress(activity.getString(R.string.Modal_ResultsNotUploaded_Uploading, paramOfParam));
+                if (publishProgress) {
+                    publishProgress(activity.getString(R.string.Modal_ResultsNotUploaded_Uploading, paramOfParam));
+                }
                 Measurement m = measurements.get(i);
                 m.result.load();
                 if(!d.measurementsManager.reSubmit(m, session)){

@@ -298,19 +298,49 @@ public class AbstractTestTest extends RobolectricAbstractTest {
     @Test
     public void testTor() {
         // Arrange
-        AbstractTest test = new WebConnectivity();
+        Tor test = new Tor();
         Result result = ResultFactory.build(new WebsitesSuite(), true, false);
         result.save();
 
+        JsonResult jsonResult = JsonResultFactory.build(test, true);
+        String jsonResultString = gson.toJson(jsonResult);
+
         // Act
         testEngine.sendNextEvent(EventResultFactory.buildStarted());
-
-        testEngine.sendNextEvent(EventResultFactory.buildEnded());
+        testEngine.sendNextEvent(EventResultFactory.buildCreateReport("1000_00001"));
+        testEngine.sendNextEvent(EventResultFactory.buildMeasurementStart(1, UrlFactory.createAndSave().url));
+        testEngine.sendNextEvent(EventResultFactory.buildMeasurementEntry(1, jsonResultString));
 
         test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
 
         // Assert
-        fail();
+        assertNotNull(updatedMeasurement);
+        assertFalse(updatedMeasurement.is_anomaly);
+    }
+
+    @Test
+    public void testTorFail() {
+        // Arrange
+        Tor test = new Tor();
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+
+        JsonResult jsonResult = JsonResultFactory.build(test, false);
+        String jsonResultString = gson.toJson(jsonResult);
+
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+        testEngine.sendNextEvent(EventResultFactory.buildCreateReport("1000_00001"));
+        testEngine.sendNextEvent(EventResultFactory.buildMeasurementStart(1, UrlFactory.createAndSave().url));
+        testEngine.sendNextEvent(EventResultFactory.buildMeasurementEntry(1, jsonResultString));
+
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq("1000_00001")).querySingle();
+
+        // Assert
+        assertNotNull(updatedMeasurement);
+        assertTrue(updatedMeasurement.is_anomaly);
     }
 
     @Test

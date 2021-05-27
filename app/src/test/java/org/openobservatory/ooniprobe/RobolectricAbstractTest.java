@@ -18,6 +18,7 @@ import org.openobservatory.ooniprobe.factory.TestApplication;
 import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowLooper;
 
 import static org.robolectric.Shadows.shadowOf;
 
@@ -47,9 +48,11 @@ public abstract class RobolectricAbstractTest {
     @SuppressWarnings("rawtypes")
     public void idleTaskUntilFinished(AsyncTask task) {
         try {
+            ShadowLooper.idleMainLooper();
             while (task.getStatus() != AsyncTask.Status.FINISHED) {
                 shadowOf(Looper.getMainLooper()).idle();
             }
+            ShadowLooper.runMainLooperToNextTask();
         } catch (Exception e) {
             e.printStackTrace();
         }

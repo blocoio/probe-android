@@ -1,5 +1,7 @@
 package org.openobservatory.ooniprobe.factory;
 
+import android.content.Context;
+
 import org.openobservatory.ooniprobe.model.database.Network;
 import org.openobservatory.ooniprobe.model.database.Result;
 import org.openobservatory.ooniprobe.test.suite.AbstractSuite;
@@ -185,4 +187,29 @@ public class ResultFactory {
         return tempResult;
     }
 
+    /**
+     * Saves a result in the DB and returns it with the given number of measurements, and
+     * all related model objects in the DB and files in storage.
+     *
+     * @param context                to save the entry files
+     * @param suite                  type of result (ex: Websites, Instant Messaging, Circumvention, Performance)
+     * @param accessibleMeasurements number of accessible measurements
+     * @param blockedMeasurements    number of blocked measurements
+     * @param measurementsUploaded   if the measurements are uploaded
+     * @return result with
+     * @throws IllegalArgumentException for excess number of measurements
+     */
+    public static Result createAndSaveWithEntryFiles(
+            Context context,
+            AbstractSuite suite,
+            int accessibleMeasurements,
+            int blockedMeasurements,
+            boolean measurementsUploaded
+    ) throws IllegalArgumentException {
+        Result temp = createAndSave(suite, accessibleMeasurements, blockedMeasurements, measurementsUploaded);
+        MeasurementFactory.addEntryFiles(context, temp.getMeasurements(), false);
+        temp.save();
+
+        return temp;
+    }
 }

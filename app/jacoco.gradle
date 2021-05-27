@@ -28,6 +28,10 @@ task jacocoAndroidTestReport(type: JacocoReport) {
         '**/*MembersInjector*.*',
         '**/*_Provide*Factory*.*',
         '**/*_Factory.*',
+         // DBFlow
+        '**/*_Table*.*',
+        '**/*AppDatabaseAppDatabase_Database*.*',
+        '**/*GeneratedDatabaseHolder*.*',
         // Butter Knife
         '**/*_ViewBinding*',
       ]

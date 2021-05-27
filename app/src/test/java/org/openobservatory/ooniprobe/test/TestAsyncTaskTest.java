@@ -1,7 +1,6 @@
 package org.openobservatory.ooniprobe.test;
 
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.openobservatory.engine.OONISession;
 import org.openobservatory.engine.OONIURLInfo;
 import org.openobservatory.engine.OONIURLListResult;
@@ -41,9 +40,9 @@ public class TestAsyncTaskTest extends RobolectricAbstractTest {
         TestAsyncTask task = new TestAsyncTask(a, suiteList, runServiceMock);
         Result testResult = ResultFactory.build(new WebsitesSuite(), true);
 
-        Mockito.when(mockedSuite.getTestList(any())).thenReturn(new AbstractTest[0]);
+        when(mockedSuite.getTestList(any())).thenReturn(new AbstractTest[0]);
 
-        Mockito.when(mockedSuite.getResult()).thenReturn(testResult);
+        when(mockedSuite.getResult()).thenReturn(testResult);
 
         // Act
         task.execute();
@@ -73,29 +72,29 @@ public class TestAsyncTaskTest extends RobolectricAbstractTest {
         WebConnectivity test = new WebConnectivity();
         test.setInputs(null);
 
-        Mockito.when(mockedSuite.getTestList(any())).thenReturn(new WebConnectivity[]{test});
-        Mockito.when(mockedSuite.getResult()).thenReturn(testResult);
+        when(mockedSuite.getTestList(any())).thenReturn(new WebConnectivity[]{test});
+        when(mockedSuite.getResult()).thenReturn(testResult);
 
-        OONIURLListResult listResult = Mockito.mock(OONIURLListResult.class);
-        Mockito.when(ooniSessionMock.fetchURLList(any(),any())).thenReturn(listResult);
+        OONIURLListResult listResult = mock(OONIURLListResult.class);
+        when(ooniSessionMock.fetchURLList(any(),any())).thenReturn(listResult);
 
         String url1 = faker.internet.url();
-        OONIURLInfo firstUrl = Mockito.mock(OONIURLInfo.class);
-        Mockito.when(firstUrl.getUrl()).thenReturn(url1);
-        Mockito.when(firstUrl.getCategoryCode()).thenReturn("");
-        Mockito.when(firstUrl.getCountryCode()).thenReturn(faker.address.countryCode());
+        OONIURLInfo firstUrl = mock(OONIURLInfo.class);
+        when(firstUrl.getUrl()).thenReturn(url1);
+        when(firstUrl.getCategoryCode()).thenReturn("");
+        when(firstUrl.getCountryCode()).thenReturn(faker.address.countryCode());
 
         String url2 = faker.internet.url();
-        OONIURLInfo secondUrl = Mockito.mock(OONIURLInfo.class);
-        Mockito.when(secondUrl.getUrl()).thenReturn(url2);
-        Mockito.when(secondUrl.getCategoryCode()).thenReturn("");
-        Mockito.when(secondUrl.getCountryCode()).thenReturn(faker.address.countryCode());
+        OONIURLInfo secondUrl = mock(OONIURLInfo.class);
+        when(secondUrl.getUrl()).thenReturn(url2);
+        when(secondUrl.getCategoryCode()).thenReturn("");
+        when(secondUrl.getCountryCode()).thenReturn(faker.address.countryCode());
 
         String url3 = faker.internet.url();
-        OONIURLInfo thirdUrl = Mockito.mock(OONIURLInfo.class);
-        Mockito.when(thirdUrl.getUrl()).thenReturn(url3);
-        Mockito.when(thirdUrl.getCategoryCode()).thenReturn("");
-        Mockito.when(thirdUrl.getCountryCode()).thenReturn(faker.address.countryCode());
+        OONIURLInfo thirdUrl = mock(OONIURLInfo.class);
+        when(thirdUrl.getUrl()).thenReturn(url3);
+        when(thirdUrl.getCategoryCode()).thenReturn("");
+        when(thirdUrl.getCountryCode()).thenReturn(faker.address.countryCode());
 
         when(listResult.getUrls()).thenReturn(new ArrayList<>(Arrays.asList(firstUrl, secondUrl, thirdUrl)));
 

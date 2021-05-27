@@ -412,19 +412,31 @@ public class AbstractTestTest extends RobolectricAbstractTest {
     @Test
     public void testFacebookMessenger() {
         // Arrange
-        AbstractTest test = new WebConnectivity();
-        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
-        result.save();
+        AbstractTest test = new FacebookMessenger();
+        Result result = setupTestRun(test, true);
 
         // Act
-        testEngine.sendNextEvent(EventResultFactory.buildStarted());
-
-        testEngine.sendNextEvent(EventResultFactory.buildEnded());
-
         test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq(REPORT_ID)).querySingle();
 
         // Assert
-        fail();
+        assertNotNull(updatedMeasurement);
+        assertFalse(updatedMeasurement.is_anomaly);
+    }
+
+    @Test
+    public void testFacebookMessengerFail() {
+        // Arrange
+        AbstractTest test = new FacebookMessenger();
+        Result result = setupTestRun(test, false);
+
+        // Act
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq(REPORT_ID)).querySingle();
+
+        // Assert
+        assertNotNull(updatedMeasurement);
+        assertTrue(updatedMeasurement.is_anomaly);
     }
 
     @Test

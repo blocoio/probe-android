@@ -590,6 +590,43 @@ public class AbstractTestTest extends RobolectricAbstractTest {
         assertTrue(updatedMeasurement.is_anomaly);
     }
 
+    @Test
+    public void testExperimental() {
+        // Arrange
+        AbstractTest test = new Experimental("");
+        Result result = setupTestRun(test, true);
+
+        // Act
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq(REPORT_ID)).querySingle();
+
+        // Assert
+        assertNotNull(updatedMeasurement);
+        assertFalse(updatedMeasurement.is_anomaly);
+    }
+
+    @Test
+    public void testExperimentalFail() {
+        // Arrange
+        AbstractTest test = new Experimental("");
+        Result result = ResultFactory.build(new WebsitesSuite(), true, false);
+        result.save();
+        
+        // Act
+        testEngine.sendNextEvent(EventResultFactory.buildStarted());
+        testEngine.sendNextEvent(EventResultFactory.buildCreateReport(REPORT_ID));
+        testEngine.sendNextEvent(EventResultFactory.buildMeasurementStart(MEASUREMENT_ID, UrlFactory.createAndSave().url));
+        testEngine.sendNextEvent(EventResultFactory.buildMeasurementEntry(MEASUREMENT_ID, ""));
+
+        // Act
+        test.run(c, mockPreferenceManager, gson, mockedSettings, result, 1, mockedCallback);
+        Measurement updatedMeasurement = SQLite.select().from(Measurement.class).where(Measurement_Table.report_id.eq(REPORT_ID)).querySingle();
+
+        // Assert
+        assertNotNull(updatedMeasurement);
+        assertTrue(updatedMeasurement.is_failed);
+    }
+
     private Result setupTestRun(AbstractTest test, boolean success) {
         Result result = ResultFactory.build(new WebsitesSuite(), true, false);
         result.save();

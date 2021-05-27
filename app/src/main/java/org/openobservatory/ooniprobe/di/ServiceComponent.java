@@ -11,7 +11,6 @@ import dagger.Subcomponent;
 @Subcomponent()
 public interface ServiceComponent {
     void inject(ResubmitTask.Dependencies dependencies);
-    void inject(ServiceUtil.Dependencies dependencies);
     void inject(RunTestService service);
-
+    void inject(ServiceUtil.Dependencies dependencies);
 }

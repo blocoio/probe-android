@@ -9,8 +9,12 @@ import org.openobservatory.engine.OONIMKTask;
 import org.openobservatory.engine.OONIMKTaskConfig;
 import org.openobservatory.engine.OONISession;
 import org.openobservatory.engine.OONISessionConfig;
+import org.openobservatory.ooniprobe.factory.EventResultFactory;
 import org.openobservatory.ooniprobe.model.jsonresult.EventResult;
 import org.openobservatory.ooniprobe.test.EngineInterface;
+
+import java.util.LinkedList;
+import java.util.Queue;
 
 import static org.openobservatory.ooniprobe.TestApplicationProvider.app;
 
@@ -22,7 +26,7 @@ public class TestEngineInterface extends EngineInterface {
     public boolean isTaskDone = false;
 
     private final Gson gson = app().getGson();
-    private EventResult nextEvent = null;
+    private Queue<EventResult> queueEvents = new LinkedList<>();
     private boolean taskInterrupted = false;
 
     public TestEngineInterface(OONISession session) {
@@ -55,7 +59,7 @@ public class TestEngineInterface extends EngineInterface {
     }
 
     public void sendNextEvent(EventResult nextEvent) {
-        this.nextEvent = nextEvent;
+        queueEvents.add(nextEvent);
     }
 
     public class TestOONIMKTask implements OONIMKTask {
@@ -67,16 +71,18 @@ public class TestEngineInterface extends EngineInterface {
 
         @Override
         public String waitForNextEvent() {
-            while (nextEvent == null && !taskInterrupted) {
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            EventResult currentEvent = queueEvents.poll();
+
+            if (currentEvent == null) {
+                isTaskDone = true;
+                return gson.toJson(EventResultFactory.buildEnded());
             }
-            String jsonResult = gson.toJson(nextEvent);
-            nextEvent = null;
-            return jsonResult;
+
+            if (currentEvent.key.equals("task_terminated")) {
+                isTaskDone = true;
+            }
+
+            return gson.toJson(currentEvent);
         }
 
         @Override

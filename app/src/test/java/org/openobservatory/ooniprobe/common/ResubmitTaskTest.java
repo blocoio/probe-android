@@ -96,6 +96,7 @@ public class ResubmitTaskTest extends RobolectricAbstractTest {
         ResultDetailActivity activity = buildActivity(ResultDetailActivity.class, intent);
         ResubmitTask<ResultDetailActivity> resubmitTask = new ResubmitTask<>(activity);
         resubmitTask.d.measurementsManager = managerMock;
+        resubmitTask.publishProgress = false;
         return resubmitTask;
     }
 }

@@ -40,15 +40,15 @@ public class ResultFactory {
     private static final int DEFAULT_FAILED_MEASUREMENTS = 0;
 
     public static Result build(AbstractSuite suite) {
-        return build(suite, true);
+        return build(suite, true, true);
     }
 
-    public static Result build(AbstractSuite suite, boolean wasViewed) {
+    public static Result build(AbstractSuite suite, boolean wasViewed, boolean startNetworkData) {
         Result temp = new Result();
         temp.id = faker.number.positive();
         temp.test_group_name = suite.getName();
-        temp.data_usage_down = faker.number.positive();
-        temp.data_usage_up = faker.number.positive();
+        temp.data_usage_down = startNetworkData ? faker.number.positive() : 0;
+        temp.data_usage_up = startNetworkData ? faker.number.positive() : 0;
         temp.start_time = faker.date.forward();
         temp.is_done = true;
         temp.is_viewed = wasViewed;

@@ -38,7 +38,7 @@ public class TestAsyncTaskTest extends RobolectricAbstractTest {
         AbstractSuite mockedSuite = mock(WebsitesSuite.class);
         suiteList.add(mockedSuite);
         TestAsyncTask task = new TestAsyncTask(a, suiteList, runServiceMock);
-        Result testResult = ResultFactory.build(new WebsitesSuite(), true);
+        Result testResult = ResultFactory.build(new WebsitesSuite(), true, true);
 
         when(mockedSuite.getTestList(any())).thenReturn(new AbstractTest[0]);
 
@@ -67,7 +67,7 @@ public class TestAsyncTaskTest extends RobolectricAbstractTest {
         AbstractSuite mockedSuite = mock(WebsitesSuite.class);
         suiteList.add(mockedSuite);
         TestAsyncTask task = new TestAsyncTask(a, suiteList, runServiceMock);
-        Result testResult = ResultFactory.build(new WebsitesSuite(), true);
+        Result testResult = ResultFactory.build(new WebsitesSuite(), true, true);
 
         WebConnectivity test = new WebConnectivity();
         test.setInputs(null);

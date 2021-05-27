@@ -112,7 +112,7 @@ public class TestKeyFactory {
 
             // Circumvention
             case RiseupVPN.NAME:
-                return "{\"ca_cert_status\":false,\"failing_gateways\":[{\"ip\":\"10.0.0.0\",\"port\":\"8000\",\"transport_type\":\"openvpn\"}, {\"ip\":\"10.0.0.0\",\"port\":\"8000\",\"transport_type\":\"obfs4\"}]}";
+                return "{\"transport_status\":{\"obfs4\":\"blocked\",\"openvpn\":\"blocked\"},\"ca_cert_status\":false,\"failing_gateways\":[{\"ip\":\"10.0.0.0\",\"port\":\"8000\",\"transport_type\":\"openvpn\"}, {\"ip\":\"10.0.0.0\",\"port\":\"8000\",\"transport_type\":\"obfs4\"}]}";
 
             case Tor.NAME:
                 return "{\"dir_port_accessible\":0,\"dir_port_total\":14,\"obfs4_accessible\":14,\"obfs4_total\":15,\"or_port_accessible\":0,\"or_port_dirauth_accessible\":10,\"or_port_dirauth_total\":10,\"or_port_total\":0}";

@@ -1,7 +1,5 @@
 package org.openobservatory.ooniprobe.testing;
 
-import kotlin.jvm.functions.Function0;
-
 public class WaitFor {
 
     public static void waitFor(Check check) {

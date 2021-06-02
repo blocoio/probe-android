@@ -10,7 +10,7 @@ public class RunTestJobService extends JobService {
 
     @Override
     public boolean onStartJob(JobParameters params) {
-        Application app = ((Application)getApplicationContext());
+        Application app = ((Application) getApplicationContext());
         new JobTask(this, app).execute(params);
         return true;
     }

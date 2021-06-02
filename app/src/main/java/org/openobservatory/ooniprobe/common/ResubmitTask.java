@@ -1,68 +1,49 @@
 package org.openobservatory.ooniprobe.common;
 
-import android.content.Context;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.VisibleForTesting;
 
 import com.raizlabs.android.dbflow.sql.language.Where;
 
-import org.apache.commons.io.FileUtils;
 import org.openobservatory.engine.LoggerArray;
-import org.openobservatory.engine.OONIContext;
 import org.openobservatory.engine.OONISession;
-import org.openobservatory.engine.OONISubmitResults;
 import org.openobservatory.ooniprobe.BuildConfig;
 import org.openobservatory.ooniprobe.R;
+import org.openobservatory.ooniprobe.activity.AbstractActivity;
+import org.openobservatory.ooniprobe.domain.GetResults;
+import org.openobservatory.ooniprobe.domain.MeasurementsManager;
 import org.openobservatory.ooniprobe.model.database.Measurement;
 import org.openobservatory.ooniprobe.model.database.Measurement_Table;
 import org.openobservatory.ooniprobe.test.EngineProvider;
 
-import java.io.File;
-import java.nio.charset.Charset;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import localhost.toolkit.os.NetworkProgressAsyncTask;
 
-public class ResubmitTask<A extends AppCompatActivity> extends NetworkProgressAsyncTask<A, Integer, Boolean> {
+public class ResubmitTask<A extends AbstractActivity> extends NetworkProgressAsyncTask<A, Integer, Boolean> {
     protected Integer totUploads;
     protected Integer errors;
     protected LoggerArray logger;
+
+    protected Dependencies d = new Dependencies();
+
+    @VisibleForTesting
+    // In testing, publishProgress can not be mocked by robolectric
+    protected boolean publishProgress = true;
 
     /**
      * Use this class to resubmit a measurement, use result_id and measurement_id to filter list of value
      * {@code new MKCollectorResubmitTask(activity).execute(@Nullable result_id, @Nullable measurement_id);}
      *
-     * @param activity from which this task are ex ecuted
+     * @param activity from which this task are executed
      */
     public ResubmitTask(A activity) {
         super(activity, true, false);
-    }
-
-    private boolean perform(Context c, Measurement m, OONISession session)  {
-        File file = Measurement.getEntryFile(c, m.id, m.test_name);
-        String input;
-        long uploadTimeout = getTimeout(file.length());
-        OONIContext ooniContext = session.newContextWithTimeout(uploadTimeout);
-        try {
-            input = FileUtils.readFileToString(file, Charset.forName("UTF-8"));
-            OONISubmitResults results = session.submit(ooniContext, input);
-            FileUtils.writeStringToFile(file, results.updatedMeasurement, Charset.forName("UTF-8"));
-            m.report_id = results.updatedReportID;
-            m.is_uploaded = true;
-            m.is_upload_failed = false;
-            m.save();
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            ThirdPartyServices.logException(e);
-            return false;
-        }
-    }
-
-    public static long getTimeout(long length) {
-        return length / 2000 + 10;
+        activity.getComponent().serviceComponent().inject(d);
     }
 
     @Override
@@ -108,13 +89,15 @@ public class ResubmitTask<A extends AppCompatActivity> extends NetworkProgressAs
             session.maybeUpdateResources(session.newContext());
             for (int i = 0; i < measurements.size(); i++) {
                 A activity = getActivity();
-                if (activity == null)
+                if (activity ==  null)
                     break;
                 String paramOfParam = activity.getString(R.string.paramOfParam, Integer.toString(i + 1), Integer.toString(measurements.size()));
-                publishProgress(activity.getString(R.string.Modal_ResultsNotUploaded_Uploading, paramOfParam));
+                if (publishProgress) {
+                    publishProgress(activity.getString(R.string.Modal_ResultsNotUploaded_Uploading, paramOfParam));
+                }
                 Measurement m = measurements.get(i);
                 m.result.load();
-                if (!perform(activity, m, session)) {
+                if(!d.measurementsManager.reSubmit(m, session)){
                     errors++;
                 }
             }
@@ -135,5 +118,13 @@ public class ResubmitTask<A extends AppCompatActivity> extends NetworkProgressAs
             Toast.makeText(activity, activity.getString(R.string.Toast_ResultsUploaded), Toast.LENGTH_SHORT).show();
             activity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
+    }
+
+    public static class Dependencies {
+        @Inject
+        public MeasurementsManager measurementsManager;
+
+        @Inject
+        public GetResults getResults;
     }
 }

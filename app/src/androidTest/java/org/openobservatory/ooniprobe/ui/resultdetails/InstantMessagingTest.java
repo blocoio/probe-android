@@ -2,6 +2,10 @@ package org.openobservatory.ooniprobe.ui.resultdetails;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.schibsted.spain.barista.rule.flaky.AllowFlaky;
+import com.schibsted.spain.barista.rule.flaky.FlakyTestRule;
+
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openobservatory.ooniprobe.R;
@@ -19,6 +23,10 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 @RunWith(AndroidJUnit4.class)
 public class InstantMessagingTest extends MeasurementAbstractTest {
 
+    @Rule
+    public FlakyTestRule flakyRule = new FlakyTestRule();
+
+
     @Test
     public void testHeaderData() {
         // Arrange
@@ -32,6 +40,7 @@ public class InstantMessagingTest extends MeasurementAbstractTest {
     }
 
     @Test
+    @AllowFlaky(attempts = 2)
     public void testSuccessWhatsApp() {
         // Arrange
         Result testResult = ResultFactory.createAndSave(new InstantMessagingSuite());
